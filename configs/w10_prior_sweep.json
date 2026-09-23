@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "status": "DERIVED_FROM_FROZEN_PROTOCOL",
+  "experiment_id": "W10_N2_PRIOR_SWEEP",
+  "data_roles": ["train", "validation"],
+  "test_access": "PROHIBITED",
+  "proxy_lambda_grid": [0.0, 0.00035, 0.0035, 0.01, 0.035, 0.1],
+  "seeds": [66001, 66002, 66003],
+  "boundary_weight": 0.01,
+  "moment_weight": 0.02,
+  "training_specification": "configs/generator_factorial.json",
+  "checkpoint_selection": "minimum full-validation posterior-mean reconstruction MSE",
+  "smoothing_controls": {
+    "gaussian_sigma_px": [0.0, 0.5, 1.0, 2.0],
+    "laplacian_heat_tau_px2": [0.0, 0.125, 0.5, 2.0],
+    "pairing": "tau=sigma^2/2",
+    "match_metric": "validation reconstruction MSE",
+    "relative_tolerance": 0.05,
+    "selection": "smallest absolute relative gap, then lower strength",
+    "no_match_rule": "retain closest as unmatched and prohibit matched-control claim"
+  },
+  "mechanism_diagnostics": [
+    "common_operator_residual",
+    "own_operator_residual",
+    "blur",
+    "radial_power_spectrum",
+    "condition_triplet_permutation"
+  ]
+}

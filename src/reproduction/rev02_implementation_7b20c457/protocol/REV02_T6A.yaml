@@ -1,0 +1,86 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T6A
+status: preregistered_effective_upon_protocol_commit_and_hash_receipt
+scope: fixed_five_level_validation_only_Faster_RCNN_ratio_selection
+parent_work_order: WO-LPBF-WEAKPHYS-REV02
+precondition: commit_and_SHA256_record_before_implementation_and_execution
+dependencies: [frozen_T1_train_and_validation_manifests, frozen_G1_F00_and_G2_F11_pool_manifests]
+detector_seeds: [51001, 51002, 51003]
+arms: {D2: G1_F00, D4: G2_F11}
+ratios: [0.125, 0.25, 0.5, 1.0, 2.0]
+real_training_images: 3584
+synthetic_counts: [448, 896, 1792, 3584, 7168]
+pool_size: 7168
+generator_seed_count: 10
+pool_lineage:
+  corresponding_rows: identical_donor_a_donor_b_alpha_across_G1_G2_and_D5
+  subsets: nested_deterministic_subsets_from_frozen_pool_row_order
+  stride_rule: "For ratio r, take every (2/r)-th row starting at row index 0."
+  strides: [16, 8, 4, 2, 1]
+  seed_balance: report_exact_generator_seed_composition_for_each_subset_no_outcome_driven_rebalancing
+  verify_all_10_seeds_represented: true
+  preflight_failure: stop_before_training_if_seed_representation_or_lineage_alignment_fails
+selection:
+  split: validation_only
+  epochs: [1, 2]
+  per_seed_metric: maximum_validation_study_mAP_50_95_across_fixed_epochs_1_and_2
+  per_seed_epoch_tie_rule: earlier_epoch_for_exact_metric_tie
+  across_seed_metric: arithmetic_mean_across_all_three_frozen_seeds
+  ratio_tie_tolerance_absolute: 0.002
+  ratio_tie_rule: choose_smallest_ratio_with_mean_within_0.002_of_largest_mean
+  incomplete_grid_selection: prohibited
+  completed_seed_replacement: prohibited
+  lower_boundary_result: explicitly_report_if_0.125_is_selected_without_inference_about_unmeasured_ratios
+  ratio_expansion_after_outcomes: prohibited
+  official_COCO_metric_used_for_selection: false
+training:
+  architecture_contract: REV02_T2.yaml/model
+  optimization_contract: REV02_T2.yaml/optimization
+  mixed_batch_size: 4
+  lr_decay: {clock: completed_epoch, interval: 3, gamma: 0.2}
+  full_mixed_epoch: seeded_shuffle_without_replacement
+  source_kind_field: required_explicit_real_or_synthetic
+  train_manifest: train_only
+  validation_manifest: validation_only
+  combined_or_test_manifest: prohibited
+run_grid:
+  arm_count: 2
+  ratio_count: 5
+  seed_count: 3
+  required_completed_cells: 30
+  epochs_per_cell: 2
+  training_update_total: 95424
+  no_silent_missing_or_replaced_cells: true
+validation_outputs:
+  required_per_epoch: [study_mAP_50_95, official_COCO_AP, optimizer_steps, real_images_seen, synthetic_images_seen, loss, learning_rate, elapsed_seconds, peak_memory, model_state_sha256]
+  ratio_selection_receipt: inputs_and_grid_hashes_plus_all_seed_values_and_candidate_means_and_tie_set_and_selected_ratio
+  freeze_selection_before_T2_T6B: true
+downstream_rules:
+  D2: use_frozen_D2_ratio
+  D4: use_frozen_D4_ratio
+  D5: run_union_of_D2_and_D4_selected_ratios_without_own_selection
+  RetinaNet: transfer_Faster_RCNN_selected_ratios_without_family_specific_reselection
+  no_grid_test_inference: nonselected_ratio_candidates_are_not_evaluated_on_test
+checkpoint_policy:
+  root: D:/Codex Research/LPBF_REV02_20260902
+  retain: both_epoch_model_weights_and_resume_state_for_every_completed_candidate
+  automatic_deletion: prohibited
+  environment_and_input_hashes: required
+  external_storage_authority: required_before_execution
+failure_policy:
+  nonfinite_or_OOM: fail_record_and_stop_without_seed_replacement_or_automatic_batch_change
+  incomplete_grid: no_selection_and_no_test_unlock
+  amendment: only_before_test_access_with_reason_and_prior_artifacts_preserved
+technical_checks:
+  - Exactly 30 unique arm-ratio-seed cells are required, with no extra selection cells.
+  - Every source row is train or synthetic; validation rows never enter training or donor pools.
+  - At two epochs each candidate has exactly 7168 real image presentations.
+  - Synthetic presentations equal two times the frozen subset size.
+  - Selection is recalculable from all 30 cells using the fixed tolerance.
+  - Every candidate and selection receipt binds protocol, input, code and environment hashes.
+  - No test identifiers, annotations, images or metrics are opened during T6A.
+outputs:
+  root: results/REV02/T6A
+  required: [config.yaml, raw/ratio_grid.csv, raw/epoch_metrics.csv, raw/pool_subset_composition.csv, summary.json, RUN_LOG.md]
+  figures: [figures/ratio_selection_five_levels.pdf]
+  receipts: [D2_ratio_selection.json, D4_ratio_selection.json, PRETEST_SELECTION_FREEZE.json]

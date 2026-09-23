@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "status": "W08_APPROVED_PRE_TEST",
+  "model_id": "ND_compact_conditional_ddpm_v0",
+  "purpose": "Same-corpus compact data-only diffusion comparator without external pretraining",
+  "image": {
+    "channels": 1,
+    "pilot_resolution": [64, 64],
+    "source_resolution": [300, 300],
+    "resize": "PIL bilinear",
+    "range": [-1, 1]
+  },
+  "conditioning": {
+    "dimension": 13,
+    "source": "training-partition manifest condition vector",
+    "injection": "time embedding plus condition MLP in every residual block"
+  },
+  "unet": {
+    "base_channels": 64,
+    "channel_multipliers": [1, 2, 4],
+    "residual_blocks_per_scale": 1,
+    "normalization": "GroupNorm(8)",
+    "activation": "SiLU",
+    "attention": false,
+    "prediction_target": "epsilon"
+  },
+  "diffusion": {
+    "training_steps": 1000,
+    "beta_schedule": "cosine_s_0.008",
+    "sampling_rule": "DDIM eta=0 with exactly 50 deterministic steps",
+    "sampling_mechanics_fixture": "10-step random-untrained deterministic DDIM",
+    "sampling_rule_mechanics_validated": true,
+    "production_sampling_count_validated": false,
+    "production_sampling_count_approved": true
+  },
+  "optimization_pilot": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0001,
+    "batch_size": 16,
+    "precision": "bfloat16 autocast",
+    "gradient_clip_norm": 1.0,
+    "updates": 200
+  },
+  "external_pretraining": false,
+  "full_fit": {
+    "optimizer_updates": 100000,
+    "checkpoint_rule": "final update",
+    "quality_evaluation": "frozen validation metrics followed by one locked test campaign"
+  },
+  "full_training_authorized": true
+}

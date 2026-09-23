@@ -1,0 +1,162 @@
+schema_version: 1
+protocol_id: SR-LPBF-N2-LOCK-20260914-A001
+status: FROZEN_PRE_N2_OUTCOME
+frozen_at: 2026-09-14T20:12:42+09:00
+approval_source: user_project_decision_owner_in_active_codex_task
+source_baseline_commit: 4df61e8
+test_outcomes_used_to_design_protocol: false
+amendment_required_for_change: true
+
+scope:
+  study: internal protocol-frozen replication and controlled sensitivity
+  evaluation_route: B_GROUPED_INTERNAL
+  independent_same_task_cohort: not_provided
+  external_validity_claim: prohibited
+  human_label_review: EXCLUDED_BY_USER_SCOPE
+  label_policy_interaction: EXCLUDED_BY_USER_SCOPE
+  scope_decision: docs/SCOPE_DECISION_001.md
+
+frozen_inputs:
+  derived_image_manifest:
+    path: data/manifests/image_manifest.csv
+    sha256: d72822e83ce7310bd1c58e3cd0278cd723520937e545b6523cdd72407080db26
+  specimen_split:
+    path: historical/metal_spatter_pinn/data/study_v1/specimen_split.csv
+    sha256: 62f1c1bba02fde3563020765debf9e4a95d1547604003ce554ca9f732268264e
+  label_policy:
+    path: configs/LABEL_POLICY_LOCK.yaml
+    sha256: 1724c08c5967239c8fdd62c0f9fef664dba00e15556ed33ebad0d877c06ca84b
+  model_spec:
+    path: configs/model_spec.json
+    sha256: 09b3477baa35145b8e639437c770210d5cc3f4a5c07475c15bf80ddcbc6ca1f0
+  transforms:
+    path: configs/transforms.json
+    sha256: 2b50bb53b60658c4b5f353b3b3f13e2f15d0a5c0cc7146702afb15e25a553032
+  hpo_budget:
+    path: configs/HPO_BUDGET.json
+    sha256: 99f37df7112e3a2815620d1c760be3a1e0b20c9c2fb240874d4e7831aca31a86
+  diffusion_spec:
+    path: configs/diffusion_spec.json
+    sha256: 87788aafe8e26f0e6ea14709f4c7f1103789aa91608ba92c8d56715fbd30ad3b
+  generator_factorial:
+    path: configs/generator_factorial.json
+    sha256: a966f31bbdb5576587ffb53bf597bb4eb2f75ba39e67c0b75031a1717c3a35b6
+  environment_lock:
+    path: ENVIRONMENT_LOCK.json
+    sha256: e4df59d3b30222d94ca780fafafccf9071b160f07fda52f0ccf2c2bc888627eb
+  approval_record:
+    path: docs/W08_APPROVAL_FORM.md
+    sha256: 51a3f1145fdca23e5a9e50e0525a5f305350e456b972d038466d2ac0af50b9f7
+  scope_decision:
+    path: docs/SCOPE_DECISION_001.md
+    sha256: 35a11db3b7be926b85b0038a6bc337223f60a922616dab25f805fe835beee384
+
+data_roles:
+  source_corpus_specimens: 176
+  train_specimens: 112
+  validation_specimens: 32
+  held_out_test_specimens: 32
+  grouping_unit: specimen
+  views_kept_together: true
+  manufacturing_build_unit_supported: false
+  test_access_before_pretest_completion: prohibited
+  test_use: one frozen inference campaign after all development choices and checkpoint hashes are sealed
+
+label_policy:
+  source: inherited_target
+  operational_unit: inherited_bbox_region
+  physical_semantics: unverified
+  policy_lock: configs/LABEL_POLICY_LOCK.yaml
+  corrected_labels: not_in_scope
+  human_agreement_or_error_claims: prohibited
+
+generator:
+  factorial_specification: configs/generator_factorial.json
+  primary_factorial_cells: [F00, F01, F10, F11]
+  primary_np_lambda: 0.0035
+  proxy_lambda_sensitivity_grid: [0, 0.00035, 0.0035, 0.01, 0.035, 0.1]
+  proxy_lambda_dev_seeds: [66001, 66002, 66003]
+  non_pde_controls:
+    blob_gaussian_sigma_px: [0, 0.5, 1.0, 2.0]
+    laplacian_heat_tau_px2: [0, 0.125, 0.5, 2.0]
+    pairing: tau_equals_sigma_squared_over_2
+    match_metric: validation_reconstruction_mse
+    match_relative_tolerance: 0.05
+    selection: smallest_absolute_relative_gap_then_lower_strength
+    if_no_match: retain_closest_as_unmatched_and_prohibit_matched_claim
+  compact_diffusion:
+    model_id: ND_compact_conditional_ddpm_v0
+    external_pretraining: false
+    resolution: [64, 64]
+    optimizer_updates_per_replicate: 100000
+    sampling: DDIM_eta_0_exactly_50_steps
+
+detector:
+  primary_family: torchvision_fasterrcnn_resnet50_fpn_v2
+  secondary_family: torchvision_retinanet_resnet50_fpn_v2
+  initialization: COCO_V1_from_checksum_verified_managed_copy
+  input_resolution: [300, 300]
+  precision: bfloat16_autocast
+  micro_batch: 4
+  effective_batch: 4
+  gradient_accumulation: 1
+  arms: [N0, N1, NR, NB, NF, NP, NS, ND]
+  mixed_ratio_grid: [0.125, 0.25, 0.5, 1.0]
+  mixed_ratio_selection: validation_pooled_COCO_AP_50_95_then_lower_ratio_exact_tie
+  mixed_ratio_fallback_if_grid_incomplete: 0.25
+  optimizer_updates: 8960
+  primary_checkpoint: final_update_8960
+  intermediate_checkpoints: diagnostic_only
+
+analysis:
+  primary_endpoint: mean_across_full_pipeline_replicates_of_pooled_COCO_AP_50_95_on_held_out_real_images
+  historical_bridge_endpoint: mean_specimen_AP_50_95
+  primary_comparison_family: [NP_minus_NB, NP_minus_NF, NP_minus_N1, NP_minus_NR]
+  resampling_unit: specimen_with_views_together
+  bootstrap:
+    paired_specimen_and_pipeline: true
+    draws: 20000
+    ordinary_two_sided_interval: 0.95
+    familywise_method: bonferroni_4_comparisons
+    simultaneous_individual_interval: 0.9875
+  practical_margin:
+    confirmatory_equivalence_or_noninferiority_margin: none
+    descriptive_AP_bands: [0.005, 0.01, 0.02]
+    equivalence_or_noninferiority_claim: prohibited
+
+approved_trajectory_matrix:
+  tier: SCOPE_ADJUSTED_FULL_INTERNAL
+  primary_full_data: 80
+  secondary_architecture: 20
+  low_data: 108
+  grouped_internal_validation: 36
+  label_policy_interaction: 0
+  detector_total: 244
+  excluded_label_policy_trajectories: 20
+
+seed_rosters:
+  primary_full_pipeline: [61001, 61002, 61003, 61004, 61005, 61006, 61007, 61008, 61009, 61010]
+  secondary_detector: [62001, 62002, 62003, 62004, 62005]
+  low_data: [63001, 63002, 63003]
+  grouped_internal: [64001, 64002, 64003]
+  label_policy_reserved_inactive: [65001, 65002, 65003, 65004, 65005]
+  lambda_development: [66001, 66002, 66003]
+
+compute_authority:
+  device: NVIDIA_GeForce_RTX_5080_local
+  paid_resource_authorized: false
+  cumulative_GPU_hour_ceiling: 130
+  maximum_continuous_device_session_hours: 12
+  checkpointed_resume_permitted: true
+  stop_before_ceiling_and_request_amendment: true
+
+execution_gates:
+  full_training_authorized: true
+  test_data_access_authorized_now: false
+  test_unlock_requires:
+    - all_planned_training_and_validation_cells_accounted
+    - all_selection_rules_executed_without_test_access
+    - immutable_checkpoint_and_prediction_roster
+    - hashes_for_code_environment_inputs_configs_and_checkpoints
+    - pretest_completion_receipt
+  post_lock_changes_require_dated_amendment_before_affected_execution: true

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_FIRST_N2_TEST_OUTCOME",
+  "primary_arms": ["NP", "NB", "NF", "N1", "NR"],
+  "primary_contrasts": ["NP-NB", "NP-NF", "NP-N1", "NP-NR"],
+  "bootstrap_draws": 20000,
+  "bootstrap_seed": 75001,
+  "resampling": "paired_specimen_and_pipeline_with_views_together",
+  "ordinary_interval": 0.95,
+  "simultaneous_individual_interval": 0.9875,
+  "familywise_method": "bonferroni_four_comparisons",
+  "pooled_ap_engine": "one_ground_truth_per_image_vectorized_COCO_AP_50_95_verified_against_pycocotools_for_all_primary_cells",
+  "fast_engine_absolute_tolerance": 1e-10,
+  "low_data_bootstrap_seed": 75002,
+  "low_data_draws": 20000,
+  "grouped_internal_inference": "descriptive_three_partition_OOF_only",
+  "equivalence_or_noninferiority_claim": "PROHIBITED",
+  "external_validity_claim": "PROHIBITED"
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-14T19:04:00+09:00",
+  "status": "NO_VERIFIED_SAME_TASK_EXTERNAL_COHORT",
+  "source_table": "docs/DATASET_COMPATIBILITY.csv",
+  "candidates": 7,
+  "classification_counts": {
+    "SAME_TASK_EXTERNAL": 0,
+    "NEW_TASK_REPLICATION": 2,
+    "REPRESENTATION_ONLY": 2,
+    "INCOMPATIBLE": 3,
+    "ACCESS_BLOCKED": 0
+  },
+  "direct_primary_endpoint_candidates": 0,
+  "downloaded_or_accessed_raw_candidate_data": false,
+  "test_outcomes_used": false,
+  "critical_missing_evidence": [
+    "W04 definition of the inherited foreground unit",
+    "Machine-readable per-object labels matching that unit",
+    "Documented view/FOV/scale transformation to the H0 detector endpoint",
+    "Independent cohort acquisition and split roster suitable for a frozen final test"
+  ],
+  "decision_impact": "External-validation claims remain blocked. The scientifically defensible fallback is an explicitly approved grouped internal evaluation plus separately named new-task or representation analyses.",
+  "freshness_note": "Official dataset and institutional repository pages were checked on 2026-09-14 KST; portal availability and metadata must be rechecked before W16 execution."
+}

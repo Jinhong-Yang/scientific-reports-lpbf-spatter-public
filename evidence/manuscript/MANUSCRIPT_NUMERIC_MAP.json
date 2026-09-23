@@ -1,0 +1,119 @@
+{
+  "figure_hashes": {
+    "manuscript/figures/figure_1_generator_mechanism.pdf": "57b4a481ad3e0fd7f631a433a386a3ab473dc4f501037bdf47ef34fcaf6ec6bc",
+    "manuscript/figures/figure_1_generator_mechanism.png": "538ea456d89d72251fae302e8cf4463c4f417caffabae44bcd8f01d00b007267",
+    "manuscript/figures/figure_2_synthetic_quality.pdf": "d27e2c9ce756df292c92dd21e040d16d57a764815d661fe5693f7770fec40833",
+    "manuscript/figures/figure_2_synthetic_quality.png": "bbf179197a6c2195199fce9c91a60fa79ba2adb39493d8ae2b1c6c1bcf3a9fa4",
+    "manuscript/figures/figure_3_primary_detection.pdf": "2fac6a17a0caf1fa7d0c473ad40c804f1393daaa9e6e1fd736e5d66a18cf332e",
+    "manuscript/figures/figure_3_primary_detection.png": "9f35328f3cf7e6befc84039b39aa873a5c83e8f4587d49a8ee947bd954541a68",
+    "manuscript/figures/figure_4_sensitivity.pdf": "05fed0fc279e5cb2c830776166f5f6797f77f00625c8c9b17e2c7f6cbb9cdd66",
+    "manuscript/figures/figure_4_sensitivity.png": "810ef7dcd58681251a3966471a7bee63db94a85cb28dfd1ae93f5f1de56d3472"
+  },
+  "generated_hashes": {
+    "abstract.tex": "5b374924a175d142a9cf8eb1e9bd7e086736e514372c54df33893119f0cf698e",
+    "discussion.tex": "1ae7354ab3dafe54642167405f8c319ced61ff2d3639768dbef88e2b025285c6",
+    "figure_legends.tex": "bc3fc99f67da646896d5f87af6975db45f2b0a6c26a08ca67446be2de7028604",
+    "results.tex": "85a5303b40023901c0f0b69e4649ec04603b1754ef7a9ebb331b30b31ed99c5f",
+    "results_macros.tex": "a4718ff96e2afb31f8e0c9f01e0a662468fdadbb4502fe34c1cb581469b71f16",
+    "supplement_detector.tex": "7e489d73c938c8c203bb2a7bd04cd5ae55eaa0bc9ac820266d3815b0f43d20ed",
+    "supplement_generator.tex": "5679c4fd949078e74f0c06825ab52f3db12fd22ba520d813758268618e5b18ee",
+    "supplement_quality.tex": "db39b9f9da3300d68701a38464afc72955bd2c40b7b27fd92404066a816cf414",
+    "supplement_reproducibility.tex": "6d35eb12146998450e3076be1c53b8e5587e14de513a0e0a74715ba8fc9fc12c",
+    "supplement_statistics.tex": "f95f4bba2b59747a2eadf22fa7beb59d51b317c980bca7d1cfab0ef594afc02e"
+  },
+  "primary_arm_means": {
+    "N0": 0.642709061090207,
+    "N1": 0.649490758767028,
+    "NB": 0.6351399257903818,
+    "ND": 0.6364258554193913,
+    "NF": 0.6426358889157052,
+    "NP": 0.6414256780688523,
+    "NR": 0.6517346445781018,
+    "NS": 0.6423506769993268
+  },
+  "primary_contrasts": [
+    {
+      "analysis": "primary_held_out_test",
+      "contrast": "NP-NB",
+      "draws": 20000,
+      "equivalence_or_noninferiority_claim": "PROHIBITED",
+      "estimate": 0.006285752278470502,
+      "ordinary_confidence": 0.95,
+      "ordinary_high": 0.010428531184759946,
+      "ordinary_low": 0.002373332201803871,
+      "pipeline_replicates": 10,
+      "resampling": "paired_specimen_and_pipeline_with_views_together",
+      "simultaneous_high": 0.011726053554879948,
+      "simultaneous_individual_confidence": 0.9875,
+      "simultaneous_low": 0.0012948266043985867,
+      "specimens": 32
+    },
+    {
+      "analysis": "primary_held_out_test",
+      "contrast": "NP-NF",
+      "draws": 20000,
+      "equivalence_or_noninferiority_claim": "PROHIBITED",
+      "estimate": -0.0012102108468529105,
+      "ordinary_confidence": 0.95,
+      "ordinary_high": 0.0029779699337764962,
+      "ordinary_low": -0.005582642450608138,
+      "pipeline_replicates": 10,
+      "resampling": "paired_specimen_and_pipeline_with_views_together",
+      "simultaneous_high": 0.004132913327176355,
+      "simultaneous_individual_confidence": 0.9875,
+      "simultaneous_low": -0.006884038232787353,
+      "specimens": 32
+    },
+    {
+      "analysis": "primary_held_out_test",
+      "contrast": "NP-N1",
+      "draws": 20000,
+      "equivalence_or_noninferiority_claim": "PROHIBITED",
+      "estimate": -0.008065080698175686,
+      "ordinary_confidence": 0.95,
+      "ordinary_high": -0.0008426225614777017,
+      "ordinary_low": -0.014907150805493073,
+      "pipeline_replicates": 10,
+      "resampling": "paired_specimen_and_pipeline_with_views_together",
+      "simultaneous_high": 0.001095842681090362,
+      "simultaneous_individual_confidence": 0.9875,
+      "simultaneous_low": -0.01687355669124269,
+      "specimens": 32
+    },
+    {
+      "analysis": "primary_held_out_test",
+      "contrast": "NP-NR",
+      "draws": 20000,
+      "equivalence_or_noninferiority_claim": "PROHIBITED",
+      "estimate": -0.010308966509249506,
+      "ordinary_confidence": 0.95,
+      "ordinary_high": -0.002716384705332037,
+      "ordinary_low": -0.017132152108132483,
+      "pipeline_replicates": 10,
+      "resampling": "paired_specimen_and_pipeline_with_views_together",
+      "simultaneous_high": -0.0006003068119331772,
+      "simultaneous_individual_confidence": 0.9875,
+      "simultaneous_low": -0.019073524182803673,
+      "specimens": 32
+    }
+  ],
+  "schema_version": 1,
+  "source_hashes": {
+    "evidence/final_statistics/grouped_oof_comparisons.parquet": "54f42e301ef58aa9cde4969e5e8724c757013c6da03701565aba7e922dc0a4eb",
+    "evidence/final_statistics/low_data_comparisons.parquet": "50c97576f1ce32a33f0fa952656413cbef0fb060e55e3d22e1578cc685fad971",
+    "evidence/final_statistics/primary_comparisons.parquet": "127391dc3b2b65136bb2c437fd34b285b9162a55e4ab370def935ddf57e78f2b",
+    "evidence/generator_factorial/factorial_effects_summary.csv": "999a4627459f41e76ae480780a51db4550ccf59a6503193ae9bcf6b4559bfbed",
+    "evidence/prior_sweep/regularization_path_aggregate.csv": "33c3e16e22d93aca3def48b8288022ae3fdcb2ad1b5eb93cf188228e47fb7135",
+    "evidence/resolution/resolution_sensitivity.parquet": "a3614e24dc1681d0f9e7896dcf0481b038358f625c168bbb2e2bfa023aec3049",
+    "evidence/stronger_generator/quality_arm_summary.csv": "a6f1f87d7dab10ab56a613def36d2ba78300d14075f337a1d270c8fa6cbab3f4",
+    "evidence/test_campaign/test_metrics.parquet": "c29d1871f0f63b872e8dd90f6806e9eaad9016b5b1f66c88dcfe40747f5afdfe"
+  },
+  "status": "PASS",
+  "support_document_hashes": {
+    "CODE_AVAILABILITY.md": "6681caa85c946905796eeee695300cd8e9230d895466d7fb530ed7e6fa3c4208",
+    "DATA_AVAILABILITY.md": "3c6e02417d361d78b2f13bb986e89c1cd1d3acd8f8173c86facce797db856495",
+    "README.md": "6055d773fa212763ea81128fa42f28a5d2a910bd5342f8cc7c16184cc622b5ff",
+    "docs/GITHUB_RELEASE_NOTES.md": "ad55c66556ed6671e5df8d8a76d8fbf2a1e21ca14544f5c456300ff25319a8ff"
+  },
+  "test_payload_read_by_builder": false
+}

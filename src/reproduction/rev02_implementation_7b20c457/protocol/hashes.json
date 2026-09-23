@@ -1,0 +1,21 @@
+{
+  "protocol_id": "LPBF-WEAK-PHYSICS-REV02-20260902-v1",
+  "algorithm": "SHA256",
+  "scope": "Pre-code task specifications, interpretation record and implementation interface; this receipt excludes itself to avoid a circular hash.",
+  "files": {
+    "protocol/IMPLEMENTATION_INTERFACE.md": "7f6218c01a22d85cf04d171772b90eee80ca7729512882940c302e2362133aa8",
+    "protocol/INTERPRETATION_NOTES.md": "c236b940d7026f02a33d2a570b72685d5f90ba151c25f871d75a2ef256a18727",
+    "protocol/REV02_MASTER.yaml": "5c0979b8d983b4c4da859965cc14ea6964fdd71635cfb0dcb741bccf3ec6c95c",
+    "protocol/REV02_T1.yaml": "a50ddaed2beba3438a0736fe257adf9fe972e6eb24e0dc94d607334b583ffa41",
+    "protocol/REV02_T2.yaml": "d4cdcc2257e872ab5107ccea854d59fe8931919784ab74d1ace4332cbdbe321c",
+    "protocol/REV02_T3A.yaml": "e48e2f54587d627549bca22888dd2a756cc29fa13b1ec23f8efa94338dfea4e6",
+    "protocol/REV02_T3B.yaml": "87be80ec9d5f5776e663ecfdb13b298f0473cbf4c375614f76feea2d5bbdc442",
+    "protocol/REV02_T3C.yaml": "931e1cfce2a8d739249990f2f1e697acf86d46e4a32571d4ce55c9180de8b6d0",
+    "protocol/REV02_T4.yaml": "58fc325c0b62db67a94346528f06cd3ca8a3b5a64a2dc85f689e8ff361ff87a2",
+    "protocol/REV02_T5.yaml": "701f85fc626823b2e2ea477ee934984fb385b03e1fb786b03276c32607aec69e",
+    "protocol/REV02_T6A.yaml": "764be717ef44000003818f165acda1944b363b778df71037856474410aafb38d",
+    "protocol/REV02_T6B.yaml": "f1d2732d4cddbcdbf47ea09ddb9991fe57360f5fa7f3246cfcee4b56fd485158",
+    "protocol/REV02_T7.yaml": "1828614b1f7bbca5dc0939cba458ef2a0bc7c246c209b3357c4f11805e4db3ab",
+    "protocol/REV02_T8.yaml": "38ed931f4f3f6a7733e0f6e2bbbc17b7781d08ede241ddc33134dc91eee176f4"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "campaign_id": "W17_SINGLE_LOCKED_TEST_CAMPAIGN",
+  "completed_evaluations": 208,
+  "evaluation_gpu_hours": 0.98449879199965,
+  "failure_records": [],
+  "metrics_manifest": "evidence/test_campaign/test_metrics.parquet",
+  "metrics_manifest_sha256": "c29d1871f0f63b872e8dd90f6806e9eaad9016b5b1f66c88dcfe40747f5afdfe",
+  "missing": [],
+  "planned_evaluations": 208,
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "test_payload_accessed": true
+}

@@ -1,0 +1,31 @@
+{
+  "artifacts": {
+    "evidence/final_statistics/ALL_COMPARISONS.parquet": "5c21c699cc40e2adf98171a9d3351fd6fe2c1ca094119dacb3881007bf6bfade",
+    "evidence/final_statistics/CLAIM_EVIDENCE_MATRIX.csv": "8af300dbd013f7cc6337231fc83d2b442860bc1ee26915fba01151612fbb5321",
+    "evidence/final_statistics/FAILURE_LEDGER.csv": "d7d52ca1b80c02a4e19ceb1798f7a640dc1bc751a3789e7778aa4936f9fda3f0",
+    "evidence/final_statistics/grouped_oof_comparisons.parquet": "54f42e301ef58aa9cde4969e5e8724c757013c6da03701565aba7e922dc0a4eb",
+    "evidence/final_statistics/grouped_oof_metrics.parquet": "b19cc26a603f5baf6a3945b1d84bafe7eb2d38778554c01931189e13d4f7781e",
+    "evidence/final_statistics/low_data_comparisons.parquet": "50c97576f1ce32a33f0fa952656413cbef0fb060e55e3d22e1578cc685fad971",
+    "evidence/final_statistics/primary_bootstrap_samples.npz": "be34e42502b3b52ace0ab6640fbf5ef1b5c606feec67ea5768c721e9d78051a9",
+    "evidence/final_statistics/primary_comparisons.parquet": "127391dc3b2b65136bb2c437fd34b285b9162a55e4ab370def935ddf57e78f2b"
+  },
+  "diagnostics": {
+    "bootstrap_draws": 20000,
+    "bootstrap_seed": 75001,
+    "maximum_fast_engine_absolute_error_vs_pycocotools": 2.220446049250313e-16,
+    "parallel_cells": 50,
+    "parallel_workers": 10,
+    "parallelization_changes_estimator": false,
+    "verified_primary_cells": 50
+  },
+  "equivalence_or_noninferiority_claim": "PROHIBITED",
+  "external_validity_claim": "PROHIBITED",
+  "failure_records": 6,
+  "grouped_oof_comparisons": 3,
+  "low_data_comparisons": 9,
+  "primary_comparisons": 4,
+  "schema_version": 1,
+  "scope": "internal_protocol_frozen_operational_target",
+  "status": "PASS",
+  "test_payload_accessed": true
+}

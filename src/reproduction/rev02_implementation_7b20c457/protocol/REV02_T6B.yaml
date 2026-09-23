@@ -1,0 +1,129 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T6B
+status: preregistered_effective_upon_protocol_commit_and_hash_receipt
+scope: second_detector_family_B4_only_validation_then_single_T7_campaign
+parent_work_order: WO-LPBF-WEAKPHYS-REV02
+preconditions:
+  - Protocol committed with SHA-256 recorded before implementation or execution.
+  - T1 manifests and T6A Faster R-CNN ratio selections frozen.
+  - T3B donor-matched pixel-blend pool verified.
+  - Official pretrained weights downloaded from torchvision URL and hashed before training.
+  - Approved external checkpoint storage and disk-space preflight pass.
+detector_seeds: [51001, 51002, 51003]
+arms: [D0, D2, D4, D5]
+omitted_arms: [D1, D3]
+ratio_assignment:
+  D0: 0.0
+  D2: frozen_Faster_RCNN_T6A_D2_ratio
+  D4: frozen_Faster_RCNN_T6A_D4_ratio
+  D5: sorted_unique_union_of_frozen_D2_and_D4_ratios
+  family_specific_ratio_selection: prohibited
+  D5_own_ratio_selection: prohibited
+  caveat: ratio_transfer_tests_robustness_of_the_frozen_protocol_not_each_familys_optimally_tuned_performance
+model:
+  family: torchvision_retinanet_resnet50_fpn_v2
+  initialization: RetinaNet_ResNet50_FPN_V2_Weights.COCO_V1
+  pretrained_url: https://download.pytorch.org/models/retinanet_resnet50_fpn_v2_coco-5905b1c5.pth
+  input_min_size: 300
+  input_max_size: 300
+  trainable_backbone_layers: 3
+  foreground_class_count: 1
+  internal_foreground_label: 0
+  reported_COCO_category_id: 1
+  label_mapping: map_dataset_foreground_label_1_to_internal_0_before_training_and_back_to_reporting_category_1
+  classification_adaptation: replace_only_classification_output_logits_for_one_class_after_loading_pretrained_weights
+  preserve: [pretrained_classification_convolutions, v2_GroupNorm, v2_GIoU_regression_head, pretrained_backbone_and_FPN]
+  new_logits_initialization: torchvision_normal_std_0.01_and_prior_probability_0.01_bias
+  initialization_rule: seed_before_replacing_classification_logits
+  score_threshold: 0.05
+  nms_threshold: 0.5
+  topk_candidates: 1000
+  detections_per_image: 100
+  only_foreground_predictions_enter_metrics: true
+optimization:
+  name: SGD
+  learning_rate: 0.003
+  momentum: 0.9
+  weight_decay: 0.0001
+  amp: true
+  gradient_clip_norm: 10.0
+  dataloader_workers: 0
+  cudnn_benchmark: false
+  cudnn_deterministic: true
+budget:
+  axis: B4
+  definition_reference: REV02_T2.yaml/budgets/B4
+  option: b_expanded_batch
+  optimizer_step_milestones: [896, 1792, 4480, 8960]
+  real_images_per_step: 4
+  synthetic_count_formula: "k(t) = floor(4*r*t) - floor(4*r*(t-1))"
+  cumulative_real_formula: "R(S) = 4*S"
+  cumulative_synthetic_formula: "Q(S) = floor(4*r*S)"
+  real_exposure_milestones: [3584, 7168, 17920, 35840]
+  maximum_expanded_batch_size: 12
+  optimizer_update: one_update_on_one_expanded_batch
+  loss: sum_of_torchvision_mean_reduced_training_loss_components
+  lr_decay: {clock: completed_optimizer_step, interval: 2688, gamma: 0.2}
+  validation_adaptive_stopping: prohibited
+  cross_family_compute_equality_claim: prohibited
+run_grid:
+  selected_ratio_count_symbol: u_is_1_or_2
+  trajectory_formula: "3*(3+u)"
+  minimum_trajectories: 12
+  maximum_trajectories: 15
+  milestones_per_trajectory: 4
+  seed_count_per_cell: 3
+  incomplete_grid_directional_conclusion: prohibited
+data_and_evaluation:
+  manifest_contract: REV02_T2.yaml/data_contract
+  train_and_validation_manifests: separate_files_without_test_identifiers
+  provenance: explicit_source_kind_never_inferred_from_path
+  metrics_contract: REV02_T2.yaml/metrics
+  primary: study_mAP_50_95
+  official_companion: pycocotools_2.0.11_COCOeval_bbox_AP
+  per_image_records: retain_predicted_labels_boxes_scores_and_ground_truth_with_specimen_lineage
+estimands:
+  unit: specimen_cluster_with_views_kept_together
+  pairing: same_seed_within_each_detector_family
+  contrasts: [D2_minus_D0, D4_minus_D0, D2_minus_D5_at_D2_ratio, D4_minus_D5_at_D4_ratio]
+  all_milestones_reported: true
+  principal_cross_family_directional_comparison: final_milestone_8960_updates_with_35840_real_exposures
+  intermediate_milestones: full_predeclared_sensitivity_not_selected_for_favorable_direction
+  inferential_contract: REV02_T5.yaml/detector_statistics
+  agreement_rule: >-
+    Report signs and uncertainty for every paired contrast in both families.
+    Directional agreement requires matching signs for the two neural-arm versus
+    real-only contrasts at the principal final milestone; overlapping zero
+    intervals are reported as uncertain, not as equivalence. Disagreement or
+    an incomplete second-family grid requires a scope-limited title. Even with
+    agreement, claims remain limited to two families and this single corpus.
+  physical_or_universal_generalization: prohibited
+checkpoint_policy:
+  root: D:/Codex Research/LPBF_REV02_20260902
+  retain: every_milestone_weight_and_complete_resume_state
+  resume_fields: [model, optimizer, scaler, scheduler, python_rng, numpy_rng, torch_cpu_rng, torch_cuda_rng, sampler_rng, sampler_cursor, optimizer_step, real_seen, synthetic_seen]
+  hashes: protocol_code_environment_inputs_pretrained_weights_and_checkpoints
+  automatic_deletion: prohibited
+test_lock:
+  pre_T7_reads: prohibited
+  pretest_freeze: all_T1_through_T6_validation_runs_summaries_checkpoint_roster_and_hashes
+  evaluation: one_global_T7_campaign_without_test_based_selection
+failure_policy:
+  OOM_or_nonfinite: fail_preserve_record_and_stop
+  automatic_batch_reduction_or_model_change: prohibited
+  completed_seed_replacement: prohibited
+  restart_or_amendment: documented_before_test_access_without_overwriting_completed_results
+technical_checks:
+  - One-class logits and label mapping prevent a spurious background class entering AP.
+  - All predicted reporting category IDs are 1.
+  - V2 GroupNorm and GIoU regression semantics survive classification adaptation.
+  - B4 real and synthetic counters match exact formulas at every milestone.
+  - Validation evaluation runs in eval mode and restores no training state implicitly.
+  - Official COCO conversion and empty-prediction cases pass toy-record checks.
+  - All selected ratios exactly equal the frozen Faster R-CNN selection receipts.
+  - No test manifest or combined manifest can be opened before global T7 unlock.
+outputs:
+  root: results/REV02/T6B
+  required: [config.yaml, raw/trajectory_manifest.csv, raw/exposure_grid.csv, raw/validation_metrics.csv, raw/cross_family_contrasts.csv, summary.json, RUN_LOG.md]
+  figures: [figures/second_family_B4.pdf]
+  summary_fields: [complete_grid, transferred_ratios, cross_family_directional_agreement, uncertainty, title_scope_decision, failures]

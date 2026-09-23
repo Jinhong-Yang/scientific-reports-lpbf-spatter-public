@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-14T10:07:30.433437+00:00",
+  "status": "PASS_WITH_LIMITATION",
+  "scope": "bounded ND technical pilot; no full fit, generation-quality comparison, or test access",
+  "model_id": "ND_compact_conditional_ddpm_v0",
+  "parameters": 3626049,
+  "external_pretraining": false,
+  "resolution": [
+    64,
+    64
+  ],
+  "condition_dimension": 13,
+  "diffusion_steps": 1000,
+  "prediction_target": "epsilon",
+  "precision": "bfloat16_autocast",
+  "batch_size": 16,
+  "updates": 200,
+  "test_split_used": false,
+  "training_rows": 64,
+  "validation_rows": 64,
+  "training_sample_ids_sha256": "301e5990711154384bcfd70bd3053d9c50a136a0d44e7f11d843f0abfa7c471e",
+  "validation_sample_ids_sha256": "9514d8f8300dc895778f4b46d544322abccee0d6618017ce2455c9ac0e2db914",
+  "timing": {
+    "loop_seconds_including_four_milestone_validations": 4.148947700014105,
+    "step_mean_seconds_after_5_warmup": 0.01823551128230368,
+    "step_median_seconds_all": 0.01825264998478815,
+    "step_p95_seconds_all": 0.024874825016013322
+  },
+  "memory": {
+    "peak_allocated_mib": 503.1171875,
+    "peak_reserved_mib": 608.0
+  },
+  "loss": {
+    "first_20_mean": 0.2856330845504999,
+    "last_20_mean": 0.014124568155966698,
+    "all_finite": true
+  },
+  "validation": {
+    "metric": "fixed_seed_t500_epsilon_MSE",
+    "milestones": [
+      0,
+      50,
+      100,
+      150,
+      200
+    ],
+    "values": [
+      1.1407590508460999,
+      0.02290509920567274,
+      0.01306359632872045,
+      0.009368090890347958,
+      0.00728275126311928
+    ],
+    "all_finite": true
+  },
+  "acceptance": {
+    "exactly_200_updates": true,
+    "finite_losses_and_gradients": true,
+    "train_and_validation_only": true,
+    "timing_and_memory_measured": true,
+    "fixed_validation_path_executed": true
+  },
+  "limitations": [
+    "A 200-update epsilon-prediction pilot does not establish image quality or convergence.",
+    "No DDIM sampling, FID/KID, label validity, memorization, or detector utility was evaluated.",
+    "The 64x64 pilot does not estimate 128/256/300-resolution cost.",
+    "One trajectory cannot estimate seed or pipeline variance."
+  ]
+}

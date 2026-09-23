@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "builder_did_not_read_test_payload": true,
+    "figure_hashes_match": true,
+    "figure_hashes_present": true,
+    "four_primary_contrasts": true,
+    "generated_hashes_match": true,
+    "generated_hashes_present": true,
+    "source_hashes_match": true,
+    "source_hashes_present": true,
+    "support_document_hashes_match": true,
+    "support_document_hashes_present": true,
+    "ten_pipeline_replicates": true,
+    "thirty_two_test_specimens": true,
+    "twenty_thousand_draws": true
+  },
+  "mismatches": [],
+  "schema_version": 1,
+  "status": "PASS"
+}

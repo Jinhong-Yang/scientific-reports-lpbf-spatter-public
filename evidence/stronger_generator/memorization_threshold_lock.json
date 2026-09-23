@@ -1,0 +1,22 @@
+{
+  "calibration_flag_count": 14,
+  "calibration_flag_rate": 0.013671875,
+  "calibration_rows": 1024,
+  "decision_rule": "exact_original_or_horizontal_flip OR feature_min_le_q01 OR nearest_reference_ssim_ge_q99",
+  "interpretation": "in_sample_validation_operating_rate_not_independent_false_positive_rate",
+  "phash_q01_diagnostic_only": 0,
+  "quantile_methods": {
+    "feature": "linear",
+    "phash": "lower",
+    "ssim": "linear"
+  },
+  "query_split": "validation",
+  "reference_split": "train",
+  "schema_version": 1,
+  "status": "FROZEN_VALIDATION_CALIBRATION",
+  "test_rows_used": 0,
+  "thresholds": {
+    "feature_q01": 0.0012293186192781714,
+    "nearest_reference_ssim_q99": 0.9976376833324625
+  }
+}

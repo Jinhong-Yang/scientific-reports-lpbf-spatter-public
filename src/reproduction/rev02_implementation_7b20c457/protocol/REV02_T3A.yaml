@@ -1,0 +1,193 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T3A
+title: Matched-architecture NoPDE control against the fresh weak-proxy generator
+state: preregistered_effective_upon_protocol_commit_and_hash_receipt
+authority: WO-LPBF-WEAKPHYS-REV02
+execution_gate:
+  require_protocol_git_commit: true
+  require_protocol_sha256_in_hashes_json: true
+  require_T1_split_and_canonical_box_lock: true
+  require_source_environment_and_input_hash_lock: true
+  allowed_pre_T7_data: [train, validation]
+  forbidden_pre_T7: [test_ID_file, test_manifest, test_images, test_labels, test_results]
+  no_historical_checkpoint_feature_or_result_cache_reuse: true
+  no_completed_seed_replacement: true
+  failure_action: record_failure_and_block_complete_summary_without_silent_replacement
+scope:
+  reference: fresh_F11_alias_G2
+  control: G2N
+  seeds: [41001, 41002, 41003, 41004, 41005, 41006, 41007, 41008, 41009, 41010]
+  G1_alias: fresh_F00
+  G2_alias: fresh_F11
+  G3_D3: prospectively_omitted_not_posthoc_excluded
+  paired_unit: generator_seed
+  validation_phase: complete_and_freeze_all_ten_seed_results_before_T7
+  test_phase: only_global_T7_one_shot_evaluation_after_T1_to_T6_closure
+architecture:
+  class: ConditionalVariationalField
+  decoder_type: pirate
+  image_size: 64
+  condition_dim: 13
+  latent_dim: 16
+  hidden_dim: 64
+  fourier_frequencies: [1.0, 2.0, 4.0, 8.0]
+  residual_blocks: 3
+  conditional_prior: false
+  strict_state_dict_shape_match_G2_G2N: true
+training:
+  epochs: 10
+  batch_size: 32
+  drop_last_train: true
+  validation_batch_size: 32
+  validation_limit: 1024
+  optimizer: AdamW
+  learning_rate: 0.0007
+  weight_decay: 0.000001
+  scheduler: CosineAnnealingLR
+  scheduler_T_max: 10
+  scheduler_eta_min: 0.00001
+  scheduler_step: after_each_training_epoch_before_validation
+  pixel_samples_per_image: 128
+  reconstruction_coordinates: uniform_with_replacement_on_64x64_inclusive_normalized_grid
+  collocation_samples_per_image: 32
+  collocation_distribution: uniform_[-1,1]^2
+  boundary_samples_per_image: 32
+  boundary_sampling: uniform_edge_index_and_uniform_t_in_[-1,1]
+  moment_grid_size: 16
+  moment_grid: inclusive_linspace_[-1,1]^2
+  kl_weight: 0.0002
+  kl_ramp: min(1,epoch/1)
+  regularization_ramp: min(1,epoch/3)
+  gradient_clip_global_norm: 1.0
+  latent_diversity_weight: 0.0
+  checkpoint: minimum_full_validation_pixel_MSE_earliest_epoch_on_exact_tie
+  reconstruction_loss: mean((1+10*sqrt(target))*squared_error)+0.15*mean(sqrt(1+10*sqrt(target))*absolute_error)
+  posterior_training_latent: mu+exp(0.5*logvar)*standard_normal
+  validation_latent: posterior_mean_mu
+  numerical_policy: float32_no_AMP
+  pairing:
+    same_initial_model_parameters_for_each_G2_G2N_seed: true
+    same_image_order_pixel_indices_latent_noise_collocation_and_boundary_coordinates: true
+    mechanism: fixed_per_seed_data_permutations_and_per_step_independent_rng_streams_for_posterior_pixels_collocation_boundary
+    all_factorial_arms_including_F00: identical_component_draws_regardless_of_zero_weights_compute_all_components_if_needed
+    G2N: consume_same_draws_but_optimize_only_declared_G2N_terms
+    dropout_or_added_layers: prohibited
+losses:
+  reference_G2:
+    proxy_weight: 0.035
+    proxy_loss: mean((0.2+0.8*abs(detached_residual)/max_per_image(abs(detached_residual),1e-6))*residual^2)
+    boundary_weight: 0.01
+    moment_weight: 0.02
+  G2N:
+    direct_blob_weight: 0.035
+    direct_blob_loss: mean((u-g)^2)
+    blob_g: exp(-0.5*(((x-cx)/sigma_x)^2+((y-cy)/sigma_y)^2))
+    blob_amplitude: 1.0
+    blob_center: canonical_condition_components_7_8
+    blob_spreads: same_box_area_and_aspect_derived_sigma_x_sigma_y_as_G2
+    blob_spread_definition: base=clamp(sqrt(max(expm1(log_area*log(90001))/90000,16/90000)),0.018,0.55);sigma_x=clamp(base*exp(0.25*aspect),0.018,0.60);sigma_y=clamp(base*exp(-0.25*aspect),0.018,0.60)
+    laplacian_weight: 0.035
+    laplacian_loss: mean((d2u_dx2+d2u_dy2)^2)
+    laplacian_coefficient: constant_one_no_condition_dependence
+    derivative_method: torch_autograd_create_graph_true_on_the_same_collocation_points
+    residual_based_attention: false
+    advection_reaction_source_strength_coefficients: absent
+    boundary_weight: 0.01
+    boundary_loss: mean(u_boundary^2)
+    moment_weight: 0.02
+    moment_loss: mean((weighted_center-target_center)^2)+0.25*mean((sqrt(clamp(weighted_variance,1e-6))-target_spread)^2)
+    moment_weights: u^2+0.000001
+    total: reconstruction+KL_ramp*0.0002*KL+regularization_ramp*(0.035*direct_blob+0.035*laplacian+0.01*boundary+0.02*moment)
+evaluation:
+  authoritative_common_specification: REV02_T1.yaml/evaluation
+  evaluator_rng_seed: 61003
+  batch_size: 12
+  render_size: 64
+  reconstruction: encode_evaluation_image_to_mu_then_render_same_condition
+  generation: training_posterior_bank_only_nearest64_same_material_view_condition_matching
+  donor_match_dimensions: [0, 1, 2, 7, 8, 9, 10]
+  donor_draws: two_with_replacement
+  donor_alpha: uniform_[0.2,0.8]
+  latent_noise_sd: 0.08
+  same_donor_plan_and_latent_noise_draws_across_paired_models: true
+  rng_compatibility: frozen_model_independent_donor_and_noise_plans_shared_across_all_arms_and_seeds_no_historical_rng_consumption_contract
+  fresh_proxy:
+    coefficients: immutable_baseline_optical_proxy
+    points_per_image: 32
+    coordinates: uniform_[-1,1]^2
+    coordinate_seed: 61003
+    coordinate_plan: precompute_once_in_sorted_sample_id_order_shared_across_all_arms_seeds_and_coefficient_scoring_variants
+    aggregate: mean_over_images_of_sqrt(mean_over_coordinates(residual^2))
+  PFFD_std:
+    features: [mean_intensity, max_intensity, radiance_mass, centroid_x, centroid_y, variance_x, variance_y, bright_area_fraction, bbox_width_fraction, bbox_height_fraction, component_count]
+    image_input: clip_grayscale_float64_image_to_[0,1]_at_64x64
+    feature_definitions:
+      mean_intensity: arithmetic_mean_of_all_pixels
+      max_intensity: maximum_pixel
+      radiance_mass: sum_pixels_divided_by_pixel_count_identical_to_mean_intensity
+      centroid_x: sum((I^2+1e-8)*x_index)/sum(I^2+1e-8)/(width-1)
+      centroid_y: sum((I^2+1e-8)*y_index)/sum(I^2+1e-8)/(height-1)
+      variance_x: sum((I^2+1e-8)*(x_index/(width-1)-centroid_x)^2)/sum(I^2+1e-8)
+      variance_y: sum((I^2+1e-8)*(y_index/(height-1)-centroid_y)^2)/sum(I^2+1e-8)
+      bright_area_fraction: mean(I>=max(0.08,mean(I)+2.5*population_SD(I)))
+      bbox_width_fraction: (max_bright_x-min_bright_x+1)/width_or_zero_if_empty
+      bbox_height_fraction: (max_bright_y-min_bright_y+1)/height_or_zero_if_empty
+      component_count: scipy_ndimage_label_default_2D_four_connectivity_on_bright_mask
+    standardization: fit_mean_and_population_SD_on_all_3584_new_train_images_at_64x64_only_replace_scale_below_1e-6_with_1_then_freeze_and_apply_to_both_real_evaluation_and_generated_features
+    duplicate_feature_disclosure: mean_intensity_and_radiance_mass_are_exactly_equal_in_the_legacy_11_feature_definition_both_retained_for_metric_continuity_not_claimed_independent
+    covariance: sample_covariance_plus_1e-8_identity
+    matrix_square_root: Symmetric PSD eigendecomposition of sqrt(C_real)*C_generated*sqrt(C_real) as frozen in T1; negative eigenvalues in [-1e-8,0] and final distances in [-1e-8,0] only are clipped, larger defects fail.
+    distance: squared_Euclidean_difference_of_feature_means+trace(C_real+C_generated-2*sqrtm(C_real*C_generated))
+    scope: morphology_feature_distance_not_thermophysical_error
+  diversity:
+    conditions: two_rows_sorted_by_sample_id_per_stratum_and_view_group_32_strata_times_2_views_times_2_rows_equals_128_targets
+    generated_samples_per_condition: 4
+    pairs: all_six_unordered_pairs
+    aggregate: mean_of_one_minus_skimage_SSIM_data_range_1
+  boundary_energy: mean_squared_generated_field_on_32_fixed_boundary_points_eight_inclusive_linspace_per_edge_corners_duplicated_shared_across_arms_and_seeds_as_T1
+  centroid_error: mean_per_image_Euclidean_error_in_normalized_coordinates_on_16x16_grid_with_weights_u_squared_plus_1e-6
+  spread_error: mean_per_image_RMSE_of_x_y_standard_deviations_against_box_target_on_same_16x16_grid
+  PSNR: 10*log10(1/max(full_split_pixel_MSE,1e-12))
+  SSIM_secondary: mean_per_image_skimage_structural_similarity_reconstruction_data_range_1
+  SSIM_parameters: {data_range: 1.0, win_size: 7, gaussian_weights: false, use_sample_covariance: true, K1: 0.01, K2: 0.03}
+  primary_endpoints: [fresh_collocation_proxy_RMS, reconstruction_PSNR, PFFD_std, within_condition_one_minus_SSIM, boundary_energy, moment_centroid_error, moment_spread_error]
+  mandatory_secondary_endpoints: [reconstruction_SSIM]
+  seven_endpoint_resolution: retain_predecessor_seven_primaries_and_report_reconstruction_SSIM_as_mandatory_secondary_to_preserve_T5_42_test_structure
+decision_rule:
+  differences: G2N_minus_G2_within_each_seed
+  endpoint_pass: abs(mean(paired_differences))<=sample_SD(paired_differences_ddof_1)
+  overall_descriptive_match: all_seven_primary_endpoints_pass
+  degenerate_SD: apply_same_descriptive_inequality_zero_difference_passes_nonzero_difference_fails
+  if_all_pass: declared_PDE_regularization_is_not_descriptively_distinguished_from_blob_alignment_plus_smoothing_under_this_predeclared_seed_SD_rule
+  if_any_fail: report_which_endpoints_fail_and_both_directions_without_global_identity_claim
+  inference_scope: descriptive_rule_not_equivalence_noninferiority_or_proof_of_identical_distributions
+  apply_separately: [validation, T7_test]
+  no_test_selection_or_threshold_change: true
+profiling:
+  devices: same_available_GPU_and_locked_environment_for_G2_and_G2N
+  parameters: total_and_trainable_parameter_counts
+  input: one_zero_64x64_image_plus_zero_13_condition_encode_then_4096_coordinate_decode
+  mode: eval_no_grad_float32
+  FLOPs: sum_torch_profiler_key_average_flops_with_with_flops_true
+  equality_acceptance: exact_parameter_count_and_profiled_forward_FLOP_equality
+  memory: separately_record_inference_forward_peak_and_actual_training_peak
+  cost_claim: inference_capacity_matched_training_cost_not_required_to_match
+outputs:
+  local_root: revision_rev02_20260902/results/REV02/T3A
+  large_root: D:/Codex Research/LPBF_REV02_20260902
+  required: [config.yaml, raw/per_seed_endpoints.csv, raw/paired_differences.csv, raw/capacity_profile.csv, summary.json, figures/G2_vs_G2N.pdf, RUN_LOG.md]
+  per_run: [resolved_config.yaml, environment_lock, input_hashes, source_hashes, seed, checkpoint_hash, history.csv, run_summary.json]
+planned_implementation:
+  revision_local_runner: revision_rev02_20260902/scripts/rev02_generator.py
+  revision_local_evaluator: revision_rev02_20260902/scripts/rev02_generator.py
+  no_experiment_code_before_protocol_commit: true
+  forbidden_legacy_mains: [evaluate_confirmatory_generators.py, evaluate_factorial.py, distribution_and_blur_controls.py, build_reproducibility_inventory.py]
+reusable_source_versions:
+  src/metal_spatter_pinn/model.py: d4f6523b74cd90e41af9c97d951162f68bef1ed40c2bf31a00002b9a73c8217d
+  src/metal_spatter_pinn/training.py: 8408612bbf9a7db2f98ff7e1417cc8767b5e6709498f86372293b3a789b8c8a3
+  src/metal_spatter_pinn/physics.py: 4e313d45765e0a87b6f8a7a9aa80f2cd75a493e5e638ac88c0a8a1f6368dad38
+  src/metal_spatter_pinn/data.py: 7f8e280578b8ad6056f130598a7ecc4bf062a919acc6c1d45f9f51b06bbfa237
+  src/metal_spatter_pinn/inference.py: fb404779ed6108388340570a03739c09eced37ba75ecb014cd6c16a161b26059
+  src/metal_spatter_pinn/evaluation.py: 93fdfb5b9b9d3916840e6272a491be05039b52037ee9017629d2f1c10ae69f8c
+  revision_20260902/04_generator_ablation/scripts/evaluate_factorial.py: bdc6d1834a71a11e33d1ca566d62c6d619e118a15d7706f2463ab234bdd5e512
+  lpbf-rev01/scripts/build_reproducibility_inventory.py: 6ded0fd80c705c60f170dc7de49649d44b3a6cf4aa67eaf647d0ccf3a9a8b175

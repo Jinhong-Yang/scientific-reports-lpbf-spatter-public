@@ -1,0 +1,184 @@
+schema_version: LPBF-REV02-task-protocol-v1
+master_protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T5
+title: Ten-seed factorial inference and paired detector uncertainty
+status: preregistered_effective_upon_protocol_commit_and_hash_receipt
+execution_gate:
+  implementation_allowed_only_after_master_protocol_commit: true
+  protocol_sha256_required_in: protocol/hashes.json
+  test_access_allowed_before_T7: false
+  pretest_manifest_scope: train_and_validation_only_no_test_ids
+  historical_results_not_reused_as_REV02_evidence: true
+storage:
+  result_root: results/REV02/T5
+  checkpoint_and_pool_root: 'D:/Codex Research/LPBF_REV02_20260902'
+  required_outputs:
+    - config.yaml
+    - raw/per_seed_generator_endpoints.csv
+    - raw/factorial_effects_per_seed.csv
+    - raw/factorial_effects_rev02.csv
+    - raw/factorial_BH_42_sensitivity.csv
+    - raw/detector_paired_uncertainty.csv
+    - summary.json
+    - figures/factorial_effects_rev02.pdf
+    - RUN_LOG.md
+    - input_and_output_hashes.json
+factorial_design:
+  seeds: [41001, 41002, 41003, 41004, 41005, 41006, 41007, 41008, 41009, 41010]
+  n_paired_seeds: 10
+  pairing_unit: generator_seed
+  arms:
+    F00: {proxy: false, boundary_and_moment: false}
+    F01: {proxy: false, boundary_and_moment: true}
+    F10: {proxy: true, boundary_and_moment: false}
+    F11: {proxy: true, boundary_and_moment: true}
+  training: all_four_arms_new_training_on_REV02_split
+  historical_checkpoint_reuse: prohibited
+  matched_random_draws_across_arms: required
+  matched_evaluation_donor_alpha_epsilon_and_collocation_plans: required
+  complete_grid_required: true
+  completed_or_failed_seed_replacement: prohibited
+  missing_nonfinite_or_duplicate_cells: fail_closed_no_inferential_summary
+  checkpoint_selection: minimum_validation_reconstruction_MSE_with_earliest_epoch_tie_break
+  effects:
+    proxy_main: 0.5 * ((F10 - F00) + (F11 - F01))
+    boundary_moment_main: 0.5 * ((F01 - F00) + (F11 - F10))
+    interaction: (F11 - F10) - (F01 - F00)
+  effect_order: [proxy_main, boundary_moment_main, interaction]
+endpoints:
+  primary:
+    - {id: fresh_collocation_proxy_RMS, implementation_key: fresh_collocation_proxy_RMS, preferred_direction: lower}
+    - {id: reconstruction_PSNR, implementation_key: reconstruction_psnr_db, preferred_direction: higher}
+    - {id: PFFD_std, implementation_key: PFFD_std, preferred_direction: lower}
+    - {id: within_condition_one_minus_SSIM, implementation_key: generated_diversity_one_minus_ssim, preferred_direction: descriptive_not_monotonic_quality}
+    - {id: boundary_energy, implementation_key: boundary_energy, preferred_direction: lower}
+    - {id: moment_centroid_error, implementation_key: moment_centroid_error, preferred_direction: lower}
+    - {id: moment_spread_error, implementation_key: moment_spread_error, preferred_direction: lower}
+  primary_count: 7
+  mandatory_secondary:
+    - {id: reconstruction_SSIM, implementation_key: reconstruction_ssim_mean, inference_role: descriptive_only_outside_42_test_family}
+  other_existing_implementation_metrics: retain_as_descriptive_do_not_elevate_post_hoc
+  endpoint_mapping_note: established_seven_primary_endpoints_preserved_centroid_and_spread_separate_reconstruction_SSIM_mandatory_secondary
+generator_inference:
+  primary_method: exact_two_sided_paired_seed_sign_flip
+  statistic: absolute_mean_of_paired_seed_effects
+  null_reference: all_sign_patterns_in_minus1_plus1_to_power10
+  permutation_count: 1024
+  tail_rule: absolute_permuted_mean_greater_than_or_equal_to_absolute_observed_mean_minus_1e_minus12
+  absolute_tail_comparison_tolerance: 0.000000000001
+  p_formula: number_of_sign_patterns_in_tail_divided_by_1024
+  plus_one_Monte_Carlo_correction: false
+  minimum_two_sided_p_for_nondegenerate_nonzero_effects: 0.001953125
+  null_assumption: paired_seed_effect_signs_are_exchangeable_under_null_sign_symmetry
+  assumption_caveat: exact_enumeration_avoids_normality_but_does_not_remove_null_sign_symmetry_assumption
+  descriptive_fields: [n_paired_seeds, mean_effect, sample_SD]
+  secondary_interval:
+    method: two_sided_Student_t_95_percent_interval_for_mean_paired_seed_effect
+    degrees_of_freedom: 9
+    formula: mean_plus_or_minus_t_0_975_df9_times_sample_SD_divided_by_sqrt10
+    interpretation: secondary_normality_dependent_interval_not_primary_inference
+  degenerate_policy:
+    criterion: every_float64_effect_value_exactly_equal_to_first_value
+    tolerance_for_declaring_degenerate: none_exact_equality
+    public_p: null
+    status: undefined_degenerate
+    exclude_from_Holm: true
+    public_adjusted_p: null
+    mean_and_SD: report_descriptively
+    collapsed_Student_t_interval: label_degenerate_descriptive_not_inferential_certainty
+    near_degenerate_nonconstant_vector: retain_exact_sign_flip_and_flag_descriptively
+  p_zero_display: prohibited
+  equivalence_testing:
+    TOST: prohibited
+    unsupported_equivalence_margin: not_used
+    non_significance_interpretation: difference_or_benefit_not_established_not_evidence_of_equivalence
+multiplicity:
+  primary_Holm:
+    family: three_factorial_effects_within_one_endpoint_and_one_split
+    nominal_family_size: 3
+    undefined_degenerate_effects: excluded
+    report_fields: [family_id, nominal_family_size, tested_family_size, excluded_effect_ids, raw_p, Holm_adjusted_p]
+    algorithm: ascending_p_step_down_with_monotone_cumulative_maximum
+    tie_breaking: frozen_effect_order
+    alpha: 0.05
+  mandatory_BH_sensitivity:
+    nominal_family: all_three_effects_times_seven_primary_endpoints_times_two_splits
+    nominal_family_size: 42
+    splits: [validation, test]
+    degenerate_internal_placeholder_p: 1.0
+    degenerate_public_p: null
+    degenerate_public_q: null
+    nominal_denominator_remains_42: true
+    placeholder_interpretation: conservative_internal_accounting_only_not_a_measured_p_value
+    algorithm: sorted_p_times_42_divided_by_rank_then_reverse_cumulative_minimum_capped_at_1
+    tie_breaking: split_then_frozen_endpoint_order_then_frozen_effect_order
+    FDR_level: 0.05
+    report_fields: [nominal_family_size, defined_test_count, degenerate_test_count, degenerate_ids, raw_p, BH_q]
+    finalization_gate: only_after_T7_locked_test_evaluation
+pretest_and_posttest_separation:
+  T5_pretest_inputs: validation_endpoint_files_only
+  T5_pretest_completion:
+    - all_four_arms_times_ten_seeds_validation_cells_complete
+    - validation_effects_and_endpoint_internal_Holm_frozen
+    - test_endpoint_columns_unread_and_marked_locked
+    - global_42_test_BH_status_pending_T7
+  T7_posttest_completion:
+    - evaluate_frozen_checkpoints_once_on_locked_test_population
+    - append_test_endpoints_without_changing_validation_analysis
+    - finalize_predeclared_42_test_BH_sensitivity
+  no_test_based_selection_or_endpoint_expansion: true
+detector_statistics:
+  role: paired_uncertainty_for_predeclared_detector_runs_and_comparisons
+  run_and_comparison_inventory_source: frozen_T2_T3B_T6A_T6B_protocols_and_run_matrix
+  primary_metric: specimen_level_study_mAP_50_95
+  estimand: mean_paired_arm_difference_equally_over_specimens_within_seed_then_equally_over_optimizer_seeds
+  required_input: complete_finite_seed_by_specimen_paired_prediction_derived_metric_matrix
+  pairing: same_specimen_same_optimizer_seed_same_frozen_budget_milestone
+  primary_method: crossed_seed_by_specimen_bootstrap
+  bootstrap_replicates: 10000
+  bootstrap_random_seed: 61005
+  resampling: independently_resample_seed_axis_and_specimen_axis_then_take_full_cross_product_mean
+  interval: percentile_95_percent
+  two_sided_tail_summary: min_1_2_times_min_of_plus_one_corrected_bootstrap_tails_at_zero
+  reference_implementation: revision_20260902/06_statistics/stats_core.py_crossed_seed_by_specimen
+  bootstrap_tail_caveat: bootstrap_sign_tail_summary_not_exact_randomization_p_value
+  primary_contrast_order: [D2_minus_D0, D4_minus_D0, D2_minus_D5_at_D2_ratio, D4_minus_D5_at_D4_ratio]
+  positive_direction: Neural augmentation higher specimen-level study mAP than the named comparator.
+  multiplicity:
+    family: All four primary contrasts times all four milestones times all evaluated axes, separately within detector family and split.
+    nominal_Faster_RCNN_family_size: 48
+    nominal_RetinaNet_family_size: 16
+    adjustment: Holm over defined two-sided bootstrap-tail summaries; report these as multiplicity-adjusted bootstrap summaries, not exact randomization p-values.
+    alpha: 0.05
+    degenerate: If all paired seed-by-specimen difference entries are exactly equal in float64, return null/undefined_degenerate and exclude from Holm with nominal and actual family counts disclosed.
+    intervals: Unadjusted percentile 95% intervals are descriptive uncertainty; a positive unadjusted interval alone is not a family-wise significance claim.
+    benefit_supported: Positive mean difference plus Holm-adjusted bootstrap-tail summary below 0.05; conclusions remain bounded by the three-seed internal-corpus design and bootstrap assumptions.
+    contextual_D1: Report effects and unadjusted descriptive intervals separately, outside the four-primary-contrast family; no confirmatory D1 benefit claim.
+    official_COCO: Report pooled official-COCO differences descriptively; do not apply the specimen-study-metric intervals to them.
+  missing_or_nonfinite_cells: fail_closed_no_pairwise_complete_substitution
+  duplicated_budget_aliases:
+    same_predictions_may_serve_multiple_budget_axis_labels: true
+    aliases_are_independent_observations: false
+    unique_prediction_artifact_hash_required: true
+    do_not_duplicate_alias_cells_within_inference: true
+  pooled_COCO_AP:
+    report_alongside_custom_metric_where_predeclared: true
+    claim_specimen_metric_bootstrap_is_official_pooled_COCO_bootstrap: prohibited
+  inference_population_caveat: internal_REV02_specimen_split_and_fixed_seed_list_not_external_build_or_machine_generalization
+  interpretation:
+    no_detected_benefit: benefit_not_established
+    non_significant_difference: not_equivalence
+    equal_or_near_equal_endpoints: do_not_call_equivalent_without_justified_equivalence_design
+completion_checks:
+  - ten_seed_list_frozen_before_training_and_not_expanded_or_replaced
+  - all_four_factorial_arms_retrained_with_matched_random_inputs
+  - seven_primary_endpoints_and_mandatory_secondary_SSIM_available
+  - exact_sign_flip_unit_tests_include_null_ties_minimum_p_and_degenerate_cases
+  - Holm_tests_cover_zero_one_two_and_three_defined_effects
+  - BH_tests_preserve_42_nominal_hypotheses_with_internal_degenerate_placeholders
+  - public_outputs_contain_no_zero_p_values_or_NaN_and_report_degeneracy_explicitly
+  - validation_outputs_frozen_before_any_test_input_read
+  - global_BH_finalized_only_after_T7
+  - no_TOST_or_unsupported_equivalence_claim
+  - detector_bootstrap_preserves_seed_specimen_pairing_and_prediction_alias_identity

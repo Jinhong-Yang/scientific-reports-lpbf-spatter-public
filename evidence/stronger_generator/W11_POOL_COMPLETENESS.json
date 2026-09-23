@@ -1,0 +1,21 @@
+{
+  "arms": [
+    "NB",
+    "NF",
+    "NP",
+    "NS",
+    "ND"
+  ],
+  "completed_seeds": 10,
+  "human_review": "EXCLUDED_BY_USER_SCOPE",
+  "images_per_arm_seed": 3584,
+  "label_validity_status": "SCOPE_LIMITED_INHERITED_OPERATIONAL_TARGET_ONLY",
+  "missing_seeds": [],
+  "planned_seeds": 10,
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "quality_data_role": "validation",
+  "quality_images_per_arm_seed": 1024,
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "test_payload_accessed": false
+}

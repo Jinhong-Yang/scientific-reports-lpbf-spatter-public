@@ -1,0 +1,36 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\title{Supplementary Information\\\large \papertitle}
+\author{Hyojin Park, Nam-Hyun Yoo, and Jinhong Yang}
+\date{}
+\newcommand{\papertitle}{Optical residual regularization for LPBF spatter synthesis and detection}
+\begin{document}
+\maketitle
+
+\section{Evidence-layer and scope controls}
+Historical measurements (H0), recovered original-code reproduction (R1), and the new study (N2) were stored separately. The N2 protocol hash, data-role receipts, code and environment hashes, run rosters, failed-run records, and test-access ledger are included in the reproducibility archive. W04 independent human review and W13 corrected-label interaction were excluded by the project decision owner before N2 outcome access. This exclusion limits all bounding-box results to the operational \texttt{inherited\_bbox\_region} target and prohibits physical-label-validity claims.
+
+\section{Dataset manifest and grouping}
+The derived manifest contains 5,632 file-hash-linked rows from 176 specimens. Each specimen contributes 32 retained images. The frozen split contains 112 training, 32 validation, and 32 held-out specimens, and views belonging to a specimen remain together. The supplement reports duplicate screening, condition ranges, box geometry checks, and all known data-quality limitations without redistributing licensed pixels.
+
+\section{Generator specifications}
+\input{generated/supplement_generator}
+
+\section{Synthetic-pool construction and quality metrics}
+\input{generated/supplement_quality}
+
+\section{Detector matrices and completeness}
+\input{generated/supplement_detector}
+
+\section{Statistical analysis and additional results}
+\input{generated/supplement_statistics}
+
+\section{Reproducibility and integrity receipts}
+\input{generated/supplement_reproducibility}
+
+\end{document}

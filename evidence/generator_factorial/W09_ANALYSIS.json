@@ -1,0 +1,32 @@
+{
+  "artifacts": {
+    "factorial_effects_summary.csv": {
+      "bytes": 547,
+      "sha256": "999a4627459f41e76ae480780a51db4550ccf59a6503193ae9bcf6b4559bfbed"
+    },
+    "factorial_effects_validation.csv": {
+      "bytes": 1707,
+      "sha256": "5ab3dc4a2ddc2fed5cdc3c6e258121c3e33d47c31c34f065ecb81efd05e77a7f"
+    },
+    "factorial_seed_metrics.csv": {
+      "bytes": 7070,
+      "sha256": "d346a302755e1672a162cd06850b18989dc8790efbab0ec9ff84f30a391c99de"
+    },
+    "factorial_seed_metrics.parquet": {
+      "bytes": 10487,
+      "sha256": "1c756c354712924b3c889f396d37818c32c0e2fa5b6d5ceed69a49440aa76526"
+    },
+    "reproduction_comparison.csv": {
+      "bytes": 5983,
+      "sha256": "ffc8a21dd6bc6b675e42e5e614f8d09d0f6fddd55ec09ecd31778d13a12ac0ba"
+    }
+  },
+  "historical_runs": 40,
+  "interpretation": "Validation metrics support execution diagnostics and predeclared factorial estimates; they are not held-out detector outcomes.",
+  "n2_runs": 40,
+  "paired_factorial_seeds": 10,
+  "schema_version": 1,
+  "scope": "validation_only_pretest",
+  "status": "PASS",
+  "test_payload_accessed": false
+}

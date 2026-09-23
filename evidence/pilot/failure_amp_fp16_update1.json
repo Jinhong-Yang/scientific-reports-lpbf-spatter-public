@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-14T09:46:51.419182+00:00",
+  "status": "STOPPED_AS_DESIGNED",
+  "stage": "W06_bounded_detector_pilot",
+  "update": 1,
+  "amp_mode": "fp16",
+  "loss_total": 1.1363810300827026,
+  "gradient_norm_before_clip": "inf",
+  "grad_scaler_scale": 65536.0,
+  "test_split_used": false,
+  "reason": "Nonfinite gradient norm after fp16 AMP unscale; strict pilot STOP condition.",
+  "recovery_scope": "A separately identified bf16 or full-fp32 technical pilot may diagnose numerical precision without selecting a scientific outcome."
+}

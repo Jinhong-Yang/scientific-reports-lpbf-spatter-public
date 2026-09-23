@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "review_scope": "author_side_internal_visual_qa",
+  "independent_evaluator": "EXCLUDED_BY_USER_SCOPE",
+  "reviewed_at": "2026-09-23",
+  "reviewed_pages": {
+    "manuscript": 10,
+    "supplement": 2,
+    "cover_letter": 1
+  },
+  "reviewed_pdf_sha256": {
+    "manuscript": "a5cfc5b2d454bd3e4e670e53c9e1c15837971e8eda94d0b04290f24383b83776",
+    "supplement": "70361ff646e4533aae11d87ce267a0c18cf2bd778e112f45462f8fcda050cb59",
+    "cover_letter": "215178e07f06f6f45f2deff044823963b5174f70c48891b8521de1e4b8868a19"
+  },
+  "defects": [],
+  "known_author_confirmation_items": [
+    "Funding wording and grant number",
+    "Author contribution roles and final approval",
+    "Competing-interest declaration",
+    "Exclusive-submission and reviewer-suggestion confirmations in the cover letter"
+  ],
+  "finding": "All rendered pages were inspected for clipping, overlap, broken tables or figures, and blank output. No visual production defect was found. The listed author-confirmation items are intentional pre-submission placeholders and are not visual defects."
+}

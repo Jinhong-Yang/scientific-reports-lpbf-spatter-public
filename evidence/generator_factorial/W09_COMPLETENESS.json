@@ -1,0 +1,13 @@
+{
+  "completed": 40,
+  "cumulative_generator_gpu_hours": 1.065657397888863,
+  "failed_or_interrupted": 0,
+  "failure_records": [],
+  "missing": 0,
+  "missing_run_ids": [],
+  "planned": 40,
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "test_payload_accessed": false
+}

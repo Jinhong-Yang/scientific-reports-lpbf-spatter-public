@@ -1,0 +1,208 @@
+schema_version: LPBF-REV02-task-protocol-v1
+master_protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T4
+title: Flip-aware validation-calibrated donor-interpolation audit
+status: preregistered_effective_upon_protocol_commit_and_hash_receipt
+execution_gate:
+  implementation_allowed_only_after_master_protocol_commit: true
+  protocol_sha256_required_in: protocol/hashes.json
+  test_access_allowed_before_T7: false
+  pretest_manifest_scope: train_and_validation_only_no_test_ids
+  historical_results_not_reused_as_REV02_evidence: true
+storage:
+  result_root: results/REV02/T4
+  checkpoint_and_pool_root: 'D:/Codex Research/LPBF_REV02_20260902'
+  required_outputs:
+    - config.yaml
+    - raw/validation_to_train_continuous.csv
+    - raw/control_donor_plan.csv
+    - raw/control_donor_noise_vectors.csv
+    - raw/per_control.csv
+    - raw/per_synthetic_audit.csv
+    - threshold_lock.json
+    - summary.json
+    - figures/audit_operating_characteristics_rev02.pdf
+    - RUN_LOG.md
+    - input_and_output_hashes.json
+metric_engine:
+  canonical_input: Every calibration query, reference-bank image, control and pool query is converted to grayscale, bilinearly resized to 64 by 64 using Pillow, and represented as uint8 pixels before all metrics. No 64-versus-300 comparison is permitted.
+  feature_input: The same canonical 64-by-64 grayscale pixels converted to RGB before official ResNet18 weight transforms.
+  resolution_scope: Model-resolution donor-derived similarity; not a guarantee of native-resolution copy detection. Pool upsample/downsample quantization is retained and disclosed.
+  feature:
+    model: torchvision_ResNet18_IMAGENET1K_V1
+    frozen: true
+    fine_tuning: prohibited
+    output: 512_dimensional_penultimate_feature_with_L2_normalization
+    preprocessing: official_weights_transforms_on_RGB_conversion
+    distance: one_minus_cosine_similarity
+    mathematical_range: [0.0, 2.0]
+    floating_point_range_tolerance: 0.000001
+    range_policy: fail_if_outside_tolerance_then_clip_to_0_2
+    weight_file_sha256_required: true
+  phash:
+    decision_role: diagnostic_only
+    image: grayscale_32x32_Lanczos
+    transform: orthonormal_2D_DCT_top_left_8x8
+    threshold: median_of_DCT_submatrix_1colon_1colon
+    dc_bit: false
+    distance: 64_bit_Hamming
+    q01_method: lower
+    disclosure: report_q01_including_zero_and_explain_not_used_as_a_gate
+  ssim:
+    engine: skimage_structural_similarity
+    image: grayscale_float32_divided_by_255
+    data_range: 1.0
+    alignment: same_coordinate_comparison_no_registration
+    comparison_reference: feature_nearest_reference_for_each_query_orientation
+    win_size: 7
+    gaussian_weights: false
+    use_sample_covariance: true
+    channel_axis: null
+  exact:
+    engine: SHA256_of_grayscale_pixels_with_dimensions_recorded
+    orientations: [original, horizontal_flip]
+lookup:
+  query_orientations: [original, horizontal_flip]
+  reference_orientations: [original]
+  feature_summary: minimum_over_both_query_orientations_and_all_references
+  ssim_summary: maximum_of_two_orientation_specific_feature_nearest_reference_SSIM_values
+  phash_summary: minimum_over_both_query_orientations_and_all_references
+  exact_summary: either_query_orientation_matches_a_reference_pixel_hash
+  tie_breaking: ascending_stable_sample_id_then_original_orientation_before_flip
+  provenance_per_metric: [winning_query_orientation, nearest_reference_id, nearest_reference_path]
+decision_rule:
+  option: b_remove_feature_phash_conjunction
+  expression: exact_original_or_flip OR feature_min_le_q01_feature OR ssim_max_ge_q99_ssim
+  feature_operator: less_than_or_equal
+  ssim_operator: greater_than_or_equal
+calibration:
+  query_split: validation
+  reference_split: train
+  query_population: all_REV02_validation_images
+  reference_population: all_REV02_training_images
+  quantiles:
+    feature_min: 0.01
+    ssim_max: 0.99
+  quantile_method: linear
+  calibration_uses_flip_aware_metric_engine: true
+  thresholds_reused_from_historical_audit: false
+  threshold_lock_precedes: [any_synthetic_pool_audit, any_control_sensitivity_assessment]
+  threshold_lock_contents:
+    - rule_and_metric_engine_settings
+    - calibration_population_counts
+    - calibration_manifest_and_continuous_distance_hashes
+    - reference_image_hashes
+    - extractor_weight_hash
+    - code_and_environment_hashes
+    - quantile_values_and_methods
+    - UTC_timestamp
+  post_control_or_pool_result_retuning: prohibited
+controls:
+  selection_seed: 61004
+  random_engine: numpy_PCG64
+  independent_random_streams:
+    derivation: numpy_SeedSequence_with_entropy_list_selection_seed_stream_index
+    anchor_selection: 0
+    secondary_donor_selection: 1
+    latent_epsilon: 2
+    pixel_noise: 3
+  anchor_count: 50
+  anchor_split: validation
+  anchor_selection: uniform_without_replacement_from_ascending_stable_sample_id
+  reference_bank_split: validation
+  reference_bank_population: all_REV02_validation_images_including_untransformed_donors
+  image_size: [64, 64]
+  preprocessing: grayscale_then_bilinear_resize_to_64x64_if_required
+  pixel_serialization: round_to_nearest_clip_0_255_uint8_lossless_BMP
+  base_control_classes:
+    - id: exact
+      count: 50
+      transformation: unchanged_anchor_image
+    - id: noise_sigma2
+      count: 50
+      transformation: additive_independent_Gaussian_pixel_noise_sigma_2_on_0_255_scale
+      equivalent_normalized_sigma: 0.00784313725490196
+    - id: crop1_resize
+      count: 50
+      transformation: crop_one_pixel_from_each_edge_then_bilinear_resize_to_original_size
+    - id: gamma_brightness
+      count: 50
+      gamma: 1.05
+      brightness_multiplier: 1.02
+      transformation: gamma_on_normalized_pixels_then_uint8_round_clip_then_Pillow_brightness
+    - id: horizontal_flip
+      count: 50
+      transformation: horizontal_reflection_of_anchor
+  interpolation_controls:
+    canonical_model: G2
+    canonical_generator_seed: 41001
+    checkpoint_selection: minimum_validation_reconstruction_MSE_with_earliest_epoch_tie_break
+    checkpoint_selection_based_on_control_TPR: prohibited
+    alpha_levels: [0.99, 0.95, 0.90, 0.80]
+    count_per_alpha: 50
+    same_anchor_secondary_pairs_at_all_alpha_levels: true
+    secondary_donor_split: validation
+    distinct_secondary_donor: required_donor_b_id_differs_from_donor_a_id
+    secondary_donor_eligibility: same_material_and_view_as_anchor
+    secondary_donor_condition_distance:
+      condition_vector_dimensions: [0, 1, 2, 7, 8, 9, 10]
+      distance: mean_squared_difference_in_existing_normalized_condition_vector
+      nearest_candidates: 64
+      ordering: ascending_distance_then_ascending_stable_sample_id
+      selection: uniform_from_first_min_64_eligible_candidates
+      empty_candidate_policy: fail_closed_do_not_cross_material_or_view
+    anchor_condition_used_for_decoding: true
+    posterior_encoding: deterministic_encoder_mu_for_each_donor_under_its_own_condition
+    latent_dimension: 16
+    epsilon_distribution: standard_normal_independent_16_vector
+    same_epsilon_vector_at_all_alpha_levels: true
+    epsilon_scale: 0.08
+    formula: z_alpha = alpha * mu_a + (1 - alpha) * mu_b + 0.08 * epsilon
+    image_formula: decode(anchor_condition, z_alpha)
+    extra_pixel_space_noise: prohibited
+    actual_epsilon_vector_and_hash_recorded: true
+    donor_and_checkpoint_hashes_recorded: true
+    validation_encoding_scope: audit_control_construction_only_not_detector_pool_generation
+    interpretation: known_donor_derived_latent_interpolation_not_guaranteed_pixel_near_copy
+  total_classes: 9
+  total_controls: 450
+  donor_plan_freeze_precedes: [control_image_generation, control_sensitivity_assessment]
+pool_audit:
+  pools: [G1, G2, D5]
+  source_donor_split: train_only
+  reference_bank_split: train
+  population: every_image_in_each_frozen_REV02_pool
+  exclude_flagged_images_after_viewing_results: prohibited_without_explicit_protocol_amendment
+  report_each_pool_separately: true
+  report_donor_specific_distances_as_descriptive: true
+operating_characteristics:
+  per_class: [detected_count, total_count, observed_TPR, Wilson_95_CI_low, Wilson_95_CI_high]
+  pooled: same_fields_over_all_450_controls
+  Wilson_confidence_level: 0.95
+  Wilson_z: 1.959963984540054
+  interpolation_alpha_specific_reporting: mandatory
+  flip_TPR_after_invariant_lookup: mandatory
+  calibration_sample_flag_rate:
+    report: true
+    interpretation: in_sample_validation_to_train_operating_rate_not_independent_FPR_estimate
+  bank_caveat: controls_use_validation_reference_bank_whereas_calibration_and_pools_use_training_reference_bank
+  dependence_caveat: repeated_alpha_controls_share_donors_so_pooled_Wilson_interval_is_descriptive
+decision_for_manuscript:
+  failure_condition: any_observed_TPR_below_0.50_for_alpha_0.95_0.90_or_0.80
+  criterion_uses_point_estimate_not_CI_bound: true
+  if_failure:
+    audit_as_contribution: remove
+    zero_flag_result: report_as_audit_design_limitation_in_Limitations
+  if_no_failure:
+    interpretation: calibrated_operating_characteristics_only_not_proof_of_no_memorization
+  decision_and_supporting_class_counts_recorded_in_RUN_LOG: true
+completion_checks:
+  - all_450_controls_present_with_nine_classes_and_50_per_class
+  - all_four_alpha_levels_share_the_same_50_distinct_donor_pairs_and_epsilon_vectors
+  - no_test_ids_or_test_images_read
+  - threshold_lock_timestamp_and_hash_precede_control_assessment_and_pool_audit
+  - donor_plan_checkpoint_code_environment_and_input_hashes_recorded
+  - all_required_pool_images_audited_without_outcome_based_exclusion
+  - class_specific_Wilson_intervals_and_pooled_descriptive_interval_reported
+  - manuscript_placement_decision_follows_frozen_rule

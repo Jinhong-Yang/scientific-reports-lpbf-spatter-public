@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "DERIVED_FROM_FROZEN_PROTOCOL",
+  "experiment_id": "W11_ND_COMPACT_DIFFUSION",
+  "model_id": "ND_compact_conditional_ddpm_v0",
+  "data_roles": ["train", "validation"],
+  "test_access": "PROHIBITED",
+  "seeds": [61001, 61002, 61003, 61004, 61005, 61006, 61007, 61008, 61009, 61010],
+  "optimizer_updates": 100000,
+  "batch_size": 16,
+  "learning_rate": 0.0002,
+  "weight_decay": 0.0001,
+  "gradient_clip_norm": 1.0,
+  "precision": "bfloat16_autocast",
+  "checkpoint_every_updates": 2500,
+  "validation_every_updates": 10000,
+  "final_checkpoint_rule": "update_100000",
+  "sampling_rule": "DDIM_eta_0_exactly_50_steps"
+}

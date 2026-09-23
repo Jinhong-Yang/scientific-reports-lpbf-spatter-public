@@ -1,0 +1,32 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T7
+status: preregistration_before_experiment_code
+campaign_count: 1
+meaning: One globally unlocked evaluation campaign across the complete preregistered model/checkpoint/endpoint roster, not one model forward pass.
+prerequisites:
+  tasks: [T1,T2,T3A,T3B,T3C,T4,T5,T6A,T6B]
+  required: Every task has a hashed pretest_complete receipt with its actual last training/validation end time and immutable configs/input/code/environment/checkpoint/threshold/selection hashes.
+  pending_allowed: Only test-dependent endpoint values, test-dependent detector-family conclusions and final 42-hypothesis BH table.
+  pending_disallowed: Missing/failed training cells, missing selected weights, unresolved protocol checks, unfinished validation ratio/control results or mutable evaluation code.
+  roster: Freeze all generator best-validation checkpoints, all detector budget milestone checkpoints, arm aliases, ratios, seeds, metrics, feature scalers and inference plans before unlock. Ratio-selection candidate models are not test-evaluated.
+unlock:
+  authority: Managed REV02 coordinator checks all prerequisite receipts and records an explicit unlock event; a modelling module cannot authorize itself.
+  time: Strictly after every pretest task's final training/validation end time; use actual UTC time.
+  events: Record campaign ID, pretest receipt hashes, sealed ID/manifest hash verification and first modelling payload read event in the hash-chained chronology.
+  steward_exception: Earlier metadata assignment/write/hash event is separately recorded, not misrepresented as no prior knowledge of IDs.
+evaluation:
+  order: Fixed lexicographic run ID and milestone order, no selective stopping for favorable results.
+  generators: G0,F00,F01,F10,F11,G2N ten seeds each, plus eighteen coefficient variants, plus frozen blur/real-real diagnostics.
+  detectors: Main-family D0,D1,D2,D4,D5 all frozen axes/milestones/ratios/three seeds; second-family D0,D2,D4,D5 B4 all frozen milestones/ratios/three seeds. Prospectively identical D0/D1 axis aliases are evaluated once and transparently reused.
+  metrics: Generator seven primary plus SSIM secondary; study-specific detector mAP and official pycocotools AP, AP50, AP75, AR100 and per-image records for specimen-clustered inference.
+  saved_outputs: Immutable per-cell records, configuration/checkpoint/input hashes, predictions, timing and completion receipt. Statistics are computed from saved predictions without rerunning model inference.
+  inference_only: No fitting, thresholds, checkpoint selection, ratio/grid changes, optimizer updates or hyperparameter changes.
+recovery:
+  completed_cell: Do not reevaluate a completed, hash-valid cell; verify and skip.
+  interrupted_cell: Record reason and partial output; resume the same fixed cell within the same campaign. Retain prior partial record and mark reattempt explicitly.
+  invalid_completed_cell: Stop and disclose technical cause, impact and proposed recovery; no silent replacement.
+acceptance:
+  temporal_order: unlock_utc > max(pretest_training_validation_end_utc)
+  complete_roster: Every planned unique checkpoint has one completed evaluation, or campaign explicitly incomplete.
+  choices_after_unlock: zero
+  disclosure: Application-level chronology plus immutable run receipts supports process compliance; it is not a proof of independent external blindness.

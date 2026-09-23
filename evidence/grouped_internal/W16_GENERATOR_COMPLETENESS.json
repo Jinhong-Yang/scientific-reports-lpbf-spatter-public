@@ -1,0 +1,14 @@
+{
+  "checkpoint_policy": "fixed_final_epoch_10_no_oof_selection",
+  "completed_generator_fits": 9,
+  "completed_pools": 9,
+  "config_sha256": "ee8a7a3baf31e52723937e84a53a0316bd3b1c41ea9283a42b152f63352216c2",
+  "cumulative_gpu_hours": 0.17878751875000792,
+  "failure_records": [],
+  "full_data_generator_or_pool_reused": false,
+  "missing_run_ids": [],
+  "planned_generator_fits": 9,
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "test_payload_accessed": false
+}

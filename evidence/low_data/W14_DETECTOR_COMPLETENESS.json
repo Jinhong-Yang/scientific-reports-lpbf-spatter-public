@@ -1,0 +1,15 @@
+{
+  "completed_trajectories": 108,
+  "config_sha256": "11ae1f6fee13560adec9bb172f5b96c7b0b8125e7bd1f40440d0506b8479a782",
+  "failure_records": [],
+  "full_data_generator_or_pool_reused": false,
+  "missing_run_ids": [],
+  "planned_trajectories": 108,
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "test_payload_accessed": false,
+  "training_gpu_hours": 30.2319587557506,
+  "trajectory_manifest": "evidence/low_data/low_data_detector_manifest.parquet",
+  "trajectory_manifest_sha256": "fbd4d408df13e083a0a747651642b64f20a5f08cced80b22e8ce8b1e4b01553d",
+  "validation_gpu_hours": 1.8998668757777564
+}

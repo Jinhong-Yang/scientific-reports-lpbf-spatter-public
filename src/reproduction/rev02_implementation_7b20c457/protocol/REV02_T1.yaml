@@ -1,0 +1,101 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T1
+status: preregistration_before_experiment_code
+inputs:
+  manifest: C:/Codex Research/metal_spatter_pinn/data/study_v1/manifest.csv
+  manifest_sha256: 2909ef4ef845431710a95e9f8c874b8bc01a9168c35286cfc188783b5850e290
+  specimens: C:/Codex Research/metal_spatter_pinn/data/study_v1/specimen_split.csv
+  specimens_sha256: 62f1c1bba02fde3563020765debf9e4a95d1547604003ce554ca9f732268264e
+split:
+  seed: 61001
+  generation_count: 1
+  unit: specimen; all 32 temporally sampled images and both views remain together
+  strata: Exact material, laser power W, scan speed mm/s; 32 strata
+  algorithm: For each sorted stratum, sort specimen IDs, shuffle using random.Random(int.from_bytes(SHA256(f'{seed}|{stratum}')[:8], 'big')); first test, second validation, remaining train.
+  expected_specimens: {train: 112, validation: 32, test: 32}
+  expected_images: {train: 3584, validation: 1024, test: 1024}
+  public_file: splits/rev02_split.json
+  public_content: Train and validation assignments, per-stratum split counts, sealed-test hashes and stewardship receipt; no test IDs.
+  sealed_files: [test_specimens.json, test_manifest.csv]
+  unsealed_export: splits/rev02_split_unsealed.json is created only inside T7; the public frozen file is never overwritten.
+  metadata_only_steward: Reads the old all-corpus metadata manifest once; creates and hashes new sealed files without opening new test image bytes or label JSON.
+  model_access: Train/validation-only separate CSVs; all model/evaluation loaders require an explicit split and refuse test before a T7 unlock receipt.
+  tests: [176_unique_specimens, 32_strata_in_each_split, pairwise_disjoint_specimens, all_views_stay_together, exact_expected_counts, cross_split_image_hash_duplicates_reported, split_file_sha256]
+  immutable: Refuse to regenerate if split creation has started or the output/receipt exists, including partial failures. Technical recovery requires a documented amendment, not a new seed.
+box_canonicalization:
+  unit: Original 300-by-300 image pixels
+  rule: w=min(max(raw_w,4),W); h=min(max(raw_h,4),H); x=min(max(raw_x,0),W-w); y=min(max(raw_y,0),H-h)
+  origin: Preserve origin unless needed to keep the floored box within the image; report all width, height or origin changes.
+  reject: Missing/nonfinite geometry, negative raw bbox dimensions, or image W/H below 4 pixels. A finite raw bbox dimension from 0 up to 4 pixels is allowed and floored, not rejected.
+  derived: area=w*h; conditioning and detector targets use this single canonical representation.
+  labels: For train/validation, copy source JSON into REV02 labels and replace flat anotation.bbox.{x,y,width,height}; never edit originals. For test, defer optional canonical label JSON creation until T7.
+  provenance: Keep original bbox fields, source label path/hash, canonical label path/hash and change flags in the new manifests.
+  synthetic: Both synthetic JSON and pool CSV are written from the same canonical target box and checked field-by-field; required mismatches=0.
+fresh_training:
+  generator_arms: [G0, F00, F01, F10, F11, G2N]
+  aliases: {G1: F00, G2: F11}
+  seeds: [41001,41002,41003,41004,41005,41006,41007,41008,41009,41010]
+  aliases_are_not_extra_fits: true
+  detector_arms: [D0, D1, D2, D4, D5]
+  not_run_prospectively: [G3, D3]
+  fresh_data_dependent_state: All model fits, validation choices, latent banks, standardized-feature scalers, pool plans, audit thresholds and blur controls use the new split only.
+generator_base:
+  image_size: 64
+  model: {condition_dim: 13, latent_dim: 16, hidden_dim: 64, fourier_frequencies: [1.0,2.0,4.0,8.0], residual_blocks: 3, conditional_prior: false}
+  epochs: 10
+  batch_size: 32
+  drop_last: true
+  workers: 0
+  optimizer: {name: AdamW, learning_rate: 0.0007, weight_decay: 0.000001}
+  scheduler: {name: CosineAnnealingLR, T_max: 10, eta_min: 0.00001}
+  reconstruction: mean((1+10*sqrt(target))*squared_error) + 0.15*mean(sqrt(1+10*sqrt(target))*absolute_error)
+  pixel_samples: 128
+  collocation_samples: 32
+  boundary_samples: 32
+  moment_grid_size: 16
+  kl_weight: 0.0002
+  physics_warmup_epochs: 3
+  gradient_clip: 1.0
+  validation: All 1024 validation images, posterior mean reconstruction MSE after each epoch; minimum MSE selects, earliest epoch for an exact tie.
+  pairing: Fixed per-seed data permutations and per-step independent torch RNG streams for posterior, reconstruction pixels, collocation and boundary coordinates. Identical draws in factorial arms regardless of zero weights.
+  objectives:
+    G0: {decoder: mlp, proxy: 0, boundary: 0, moment: 0}
+    F00: {decoder: pirate, proxy: 0, boundary: 0, moment: 0}
+    F01: {decoder: pirate, proxy: 0, boundary: 0.01, moment: 0.02}
+    F10: {decoder: pirate, proxy: 0.035, boundary: 0, moment: 0}
+    F11: {decoder: pirate, proxy: 0.035, boundary: 0.01, moment: 0.02}
+evaluation:
+  before_T7: Validation only; all explicit checkpoints selected on validation MSE.
+  after_T7: Fixed test generator roster, with no further fitting or choices.
+  common_seed: 61003
+  reconstruction: All 1024 images using posterior mean at 64 by 64.
+  fresh_proxy: 32 fresh random collocation points per generated image, common across arms/seeds, baseline coefficients; endpoint is mean over images of each image's sqrt(mean(point residual squared)).
+  boundary_and_moments: Same generated latent as the distribution sample; 32 fixed boundary points (8 linspace points per edge, corners duplicated), 16-by-16 coordinate grid. Boundary energy mean(u squared); centroid Euclidean error to condition center; spread error sqrt(mean_axis((sqrt(max(variance,1e-6))-target_sigma)^2)); image-then-corpus mean. Moment weights u squared +1e-6.
+  reconstruction_PSNR: -10*log10(max(mean over all reconstruction pixel squared errors,1e-12)); also retain per-image MSE.
+  SSIM: skimage structural_similarity, data_range=1, win_size=7, gaussian_weights=false, use_sample_covariance=true, channel_axis=null; average per-image reconstruction values or within-condition pairwise values as applicable.
+  diversity: Four train-posterior interpolation samples per target condition for two target rows sorted by sample_id in each (stratum,view) group (32 strata times 2 views times 2 rows =128 targets); mean of six within-condition pairwise one-minus-SSIM values. Record all subset IDs and group coverage; no result-dependent sampling.
+  distribution: 1024 new train-bank interpolations using target-split conditions; exact same donor plan across arms/seeds, train-only feature mean/SD scaling; PFFD with all 11 existing morphology features.
+  target_condition_disclosure: Test synthesis at T7 uses test annotation-derived conditions for generator diagnostics only, never as detector augmentation or fitting input.
+  blur_controls: Fixed Gaussian sigma [0,0.5,1.0,2.0] at 64px (scipy ndimage.gaussian_filter, mode=reflect, truncate=4) on the 1024 frozen F00/G1 distribution samples of each generator seed and on real split images. Report discrete common-proxy RMS, train-scaled PFFD_std, reconstruction-independent matched-target PSNR and SSIM without using results to select anything. Zero-sigma real identity PSNR uses the fixed 1e-12 MSE floor; finite-difference RMS is not numerically interchangeable with decoder-autograd RMS.
+  real_real_floor: Deterministic stratified equal-half within-split partitions for 10 fixed seeds 61006--61015, using train-fitted scaling; mean and sample SD, no threshold tuning.
+  feature_definition_source: src/metal_spatter_pinn/evaluation.py morphology_features, with image clipped float64 in [0,1] at 64 by 64.
+  morphology_features:
+    mean_intensity: Arithmetic mean of grayscale intensities.
+    max_intensity: Maximum grayscale intensity.
+    radiance_mass: Sum of intensities divided by pixel count; intentionally identical to mean_intensity in the inherited 11-coordinate metric, not an independent feature.
+    centroid_x: Intensity-squared-plus-1e-8 weighted x centroid divided by width-1.
+    centroid_y: Intensity-squared-plus-1e-8 weighted y centroid divided by height-1.
+    variance_x: Weighted variance of normalized x coordinates about weighted centroid.
+    variance_y: Weighted variance of normalized y coordinates about weighted centroid.
+    bright_area_fraction: Fraction of pixels >= max(0.08, image mean +2.5*population image SD).
+    bbox_width_fraction: Inclusive width of the thresholded-pixel bounding box divided by image width; zero for an empty mask.
+    bbox_height_fraction: Inclusive height of the thresholded-pixel bounding box divided by image height; zero for an empty mask.
+    component_count: scipy.ndimage.label connected components of threshold mask using default 2D cross (four-connectivity).
+  feature_standardization: Fit center=column mean and scale=population SD (ddof=0) to all 3584 TRAIN images only; replace scale<1e-6 with 1.0 and report these columns. Freeze scaler hash before validation evaluation. All arms/splits/real-real/blur use the identical scaler.
+  frechet: Squared Euclidean difference of standardized feature means plus covariance trace term; sample covariance ddof=1 plus fixed 1e-8*I in both matrices. Symmetric PSD eigendecomposition of sqrt(Cr)*Cg*sqrt(Cr) for trace square root; clip eigenvalues in [-1e-8,0] and final distances in [-1e-8,0] to zero only, fail on larger negative numerical defects. Retain duplicate mean/radiance coordinate and disclose redundancy.
+historical:
+  baseline_release: revision_20260902/10_release/submission_release_20260902_v49
+  action: Preserve original files and generate an indexed snapshot with path/hash evidence under results/historical. Historical quantitative results appear only in the supplement and are not pooled with REV02 inference.
+acceptance:
+  pretest: Split/flooring integrity passes, all planned generator and detector pretest training/validation receipts exist, new audit and blur validation runs complete.
+  final: Test receipt appended only after global T7 unlock; no claim of a never-before-studied corpus.

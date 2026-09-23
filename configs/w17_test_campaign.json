@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_FIRST_N2_TEST_PAYLOAD_ACCESS",
+  "campaign_id": "W17_SINGLE_LOCKED_TEST_CAMPAIGN",
+  "test_population": "historical_study_v1_test_32_specimens_1024_images",
+  "test_status": "previously_used_historical_split_but_unseen_by_N2_outcome_selection",
+  "checkpoint": "final_update_8960_only",
+  "included_blocks": {
+    "W12_core": 100,
+    "W14_low_data": 108
+  },
+  "excluded_from_test_campaign": {
+    "W16_grouped_internal": "development_only_OOF_analysis",
+    "W15_resolution": "validation_only_fixed_checkpoint_sensitivity",
+    "intermediate_checkpoints": "diagnostic_only",
+    "W04_and_W13": "excluded_by_user_scope"
+  },
+  "total_checkpoint_evaluations": 208,
+  "model_or_threshold_selection_from_test": "PROHIBITED",
+  "seed_replacement_from_test": "PROHIBITED",
+  "endpoint_expansion_from_test": "PROHIBITED",
+  "primary_endpoint": "mean_across_full_pipeline_replicates_of_pooled_COCO_AP_50_95_on_held_out_real_images",
+  "primary_family": ["NP_minus_NB", "NP_minus_NF", "NP_minus_N1", "NP_minus_NR"],
+  "test_access_requires": "evidence/pretest/PRETEST_FREEZE.json_and_matching_TEST_UNLOCK.json"
+}

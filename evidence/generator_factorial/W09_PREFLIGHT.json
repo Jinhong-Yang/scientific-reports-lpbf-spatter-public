@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "approved_device": true,
+    "cuda_available": true,
+    "factorial_cells": true,
+    "frozen_inputs_valid": true,
+    "paired_seeds": true,
+    "planned_runs": true,
+    "protocol_receipt_valid": true,
+    "test_access_disabled": true,
+    "test_rows_written_zero": true,
+    "train_rows": true,
+    "validation_rows": true
+  },
+  "planned_run_count": 40,
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "schema_version": 1,
+  "status": "PASS",
+  "test_payload_accessed": false
+}

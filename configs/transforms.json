@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "W08_APPROVED_PRE_TEST",
+  "source_image": {
+    "width": 300,
+    "height": 300,
+    "mode": "L",
+    "pixel_range_input": [0, 255]
+  },
+  "detector": {
+    "pixel_conversion": "float32 divided by 255",
+    "channel_conversion": "single grayscale channel repeated to three channels",
+    "output_shape": [3, 300, 300],
+    "box_source": "xywh in manifest",
+    "box_output": "xyxy",
+    "horizontal_flip": "[x1,y1,x2,y2] becomes [300-x2,y1,300-x1,y2]",
+    "brightness_range_for_historical_D1": [0.8, 1.2],
+    "contrast_range_for_historical_D1": [0.8, 1.2],
+    "augmentation_scope": "historical D1 real-only baseline; not automatically adopted for N2"
+  },
+  "generator": {
+    "resize_for_historical_rev02": [64, 64],
+    "resize_method": "PIL bilinear",
+    "pixel_conversion": "float32 divided by 255",
+    "output_shape": [1, 64, 64],
+    "coordinate_range": [-1.0, 1.0],
+    "coordinate_order": ["x", "y"]
+  },
+  "condition_vector": [
+    "normalized_laser_power",
+    "normalized_scan_speed",
+    "normalized_line_energy",
+    "material_is_inconel",
+    "material_is_sus",
+    "view_is_on_axis",
+    "view_is_off_axis",
+    "normalized_bbox_center_x",
+    "normalized_bbox_center_y",
+    "normalized_log_bbox_area",
+    "tanh_log_bbox_aspect",
+    "sin_lamination_direction",
+    "cos_lamination_direction"
+  ],
+  "warnings": [
+    "Transform validity does not establish physical box semantics; the frozen operational unit is inherited_bbox_region.",
+    "The optical residual is not a calibrated temperature field.",
+    "Native-resolution N2 behavior remains a later protocol decision."
+  ]
+}

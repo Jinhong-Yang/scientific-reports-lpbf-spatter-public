@@ -1,0 +1,5 @@
+analysis,contrast,estimate,ordinary_low,ordinary_high,ordinary_confidence,simultaneous_low,simultaneous_high,simultaneous_individual_confidence,draws,specimens,pipeline_replicates,resampling,equivalence_or_noninferiority_claim
+primary_held_out_test,NP-NB,0.006285752278470502,0.002373332201803871,0.010428531184759946,0.95,0.0012948266043985867,0.011726053554879948,0.9875,20000,32,10,paired_specimen_and_pipeline_with_views_together,PROHIBITED
+primary_held_out_test,NP-NF,-0.0012102108468529105,-0.005582642450608138,0.0029779699337764962,0.95,-0.006884038232787353,0.004132913327176355,0.9875,20000,32,10,paired_specimen_and_pipeline_with_views_together,PROHIBITED
+primary_held_out_test,NP-N1,-0.008065080698175686,-0.014907150805493073,-0.0008426225614777017,0.95,-0.01687355669124269,0.001095842681090362,0.9875,20000,32,10,paired_specimen_and_pipeline_with_views_together,PROHIBITED
+primary_held_out_test,NP-NR,-0.010308966509249506,-0.017132152108132483,-0.002716384705332037,0.95,-0.019073524182803673,-0.0006003068119331772,0.9875,20000,32,10,paired_specimen_and_pipeline_with_views_together,PROHIBITED

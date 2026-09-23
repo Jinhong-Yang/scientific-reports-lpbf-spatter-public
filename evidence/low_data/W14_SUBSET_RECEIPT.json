@@ -1,0 +1,33 @@
+{
+  "artifacts": {
+    "data/manifests/w14/R1_n14.csv": "f7bb5222efed3d2174ec8f629bb656977f41efe2a22784478c46ebef326a29c2",
+    "data/manifests/w14/R1_n28.csv": "f9f6171166b2942073cf2b9c21ec130d4914896bb339084c0946fb7eea9f2ea3",
+    "data/manifests/w14/R1_n56.csv": "e52d9ee96858c4129377577a21ef8c631c20f81e86c2d761faa79c164bfae296",
+    "data/manifests/w14/R2_n14.csv": "5bc0f03113aefcadb08a33b16c1fde588241892720ac048869e4f53eb24e8058",
+    "data/manifests/w14/R2_n28.csv": "687cf4a5e50620a18c9d710a9f840456bc428b83e9464c86d03e9b7ba0354e9b",
+    "data/manifests/w14/R2_n56.csv": "6260f34a21aafdcd57694ff7021031deb34146cad3ed1aa98e83c65413f36e85",
+    "data/manifests/w14/R3_n14.csv": "480e389d2a3ba47be6fc571d32bf3b1ff0037bcb891ce253cd04b9f849eedf66",
+    "data/manifests/w14/R3_n28.csv": "5a78afb26e6f1be656905a892ff81701435464b7094c825196a48b5cb39af0fd",
+    "data/manifests/w14/R3_n56.csv": "fe41f7fb3375ee7a4e6024457fea1819f37df2b7ee47bbeb70de5f25ca3b9b23",
+    "evidence/low_data/low_data_subset_manifest.csv": "4e964aa00867c8dabfd9b18f55c9d5e0e1a0f000ec50c1277dd603a76d7f016d"
+  },
+  "config_sha256": "11ae1f6fee13560adec9bb172f5b96c7b0b8125e7bd1f40440d0506b8479a782",
+  "model_outcomes_used": false,
+  "nested_checks": {
+    "R1": true,
+    "R2": true,
+    "R3": true
+  },
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "realizations": 3,
+  "schema_version": 1,
+  "sizes": [
+    14,
+    28,
+    56
+  ],
+  "source_train_manifest_sha256": "48dad6a779c48f1a1dd052f586285ea236f2ab64d56aa43d34386a93bf6408cc",
+  "status": "PASS",
+  "subset_manifests": 9,
+  "test_payload_accessed": false
+}

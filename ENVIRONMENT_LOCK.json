@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "lock_id": "SR-LPBF-RUNTIME-20260914-v1",
+  "verified_at": "2026-09-14T18:00:00+09:00",
+  "host": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "gpu": "NVIDIA GeForce RTX 5080",
+    "gpu_memory_mib": 16303,
+    "driver": "591.86"
+  },
+  "historical_python_environment": {
+    "executable": "C:\\Codex Research\\metal_spatter_pinn\\.venv\\Scripts\\python.exe",
+    "python": "3.11.9",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "cuda_runtime": "12.8",
+    "cuda_available_verified": true,
+    "pycocotools": "2.0.11",
+    "versions_json_sha256": "a45b2b0bfd18f82822fbfd0cc4091342b1dafe0d0e326426b3207f0e7163c65b",
+    "pip_freeze_sha256": "72773ffa884cecaf2379d04bda6c33d466744edc78f99466582c45fdbd6759d2"
+  },
+  "workspace_extensions": {
+    "vendor_pyarrow": "25.0.1",
+    "purpose": "Write and read the W03 parquet manifest without changing the historical environment.",
+    "location": "vendor"
+  },
+  "fresh_w05_environment": {
+    "status": "PASS",
+    "executable": "D:\\Codex Research\\Scientific_Reports_LPBF_20260914\\.venv-w05\\Scripts\\python.exe",
+    "python": "3.11.9",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "pycocotools": "2.0.11",
+    "cuda_runtime": "12.8",
+    "cuda_available": true,
+    "device": "NVIDIA GeForce RTX 5080",
+    "requirements_sha256": "84b6dd7449111acd91d3f8420623859758c769f2f400a0cea59a9f8820142d5e",
+    "pip_freeze_sha256": "ca56ee8f024c80d7ea5ef766ff76d01c2e890bae1b62e216bb681cee578b6879",
+    "version_mismatches": 0,
+    "receipt": "evidence/environment/runtime_manifest.json"
+  },
+  "determinism_scope": "Seeded data order is verified. Historical and fresh locks do not claim cross-device bitwise equivalence; PyTorch reports no deterministic backward implementation for ROI Align on this runtime.",
+  "full_training_authorized": false,
+  "authorization_gate": "W08 protocol approval and compute-budget approval"
+}

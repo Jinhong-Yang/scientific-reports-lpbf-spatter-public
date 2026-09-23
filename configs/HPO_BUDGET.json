@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "W08_APPROVED_PRE_TEST",
+  "selection_data": "training_and_validation_only",
+  "test_access": "PROHIBITED",
+  "proxy_lambda": {
+    "values": [0, 0.00035, 0.0035, 0.01, 0.035, 0.1],
+    "primary_value": 0.0035,
+    "paired_seeds_per_value": 3,
+    "base_trials": 18,
+    "corner_extension": "not authorized without a pre-test protocol amendment"
+  },
+  "non_pde_controls": {
+    "families": ["blob_smoothing", "laplacian_smoothing"],
+    "must_include_zero": true,
+    "numeric_values": {
+      "blob_gaussian_sigma_px": [0, 0.5, 1.0, 2.0],
+      "laplacian_heat_tau_px2": [0, 0.125, 0.5, 2.0],
+      "pairing_rule": "tau=sigma^2/2"
+    },
+    "reconstruction_match_tolerance_relative_mse": 0.05,
+    "selection_rule": "On validation only, select the eligible value with the smallest absolute relative MSE gap to frozen NP; lower strength wins an exact tie. If no value is within 5%, retain the closest as UNMATCHED and prohibit a matched-control claim."
+  },
+  "detector_ratio": {
+    "values": [0.125, 0.25, 0.5, 1.0],
+    "core_starting_value": 0.25,
+    "selection_scope": "validation_only_maximum_pooled_coco_ap_50_95_lower_ratio_exact_tie",
+    "arms_requiring_equal_trial_budget": ["NB", "NF", "NP", "NS", "ND"]
+  },
+  "selection_rule": "Primary NP lambda is fixed at 0.0035; non-PDE strength uses technical validation reconstruction matching; detector mixing ratio uses validation pooled COCO AP only.",
+  "stopping_rule": "Exactly 8960 detector optimizer updates; final checkpoint is primary and intermediate milestones are diagnostic only.",
+  "practical_ap_margin": {
+    "confirmatory_margin": null,
+    "policy": "no equivalence or noninferiority claim",
+    "descriptive_planning_bands": [0.005, 0.01, 0.02]
+  },
+  "compact_diffusion": {
+    "specification": "configs/diffusion_spec.json",
+    "full_fit_updates": 100000,
+    "sampling_steps": 50,
+    "sampling_rule": "DDIM eta=0 deterministic with exactly 50 production steps; 10-step random-weight mechanics fixture passed; trained quality remains an execution result, not a pre-lock fact",
+    "resolution_grid": [64, 128, 256, 300]
+  },
+  "unresolved_before_w08": []
+}

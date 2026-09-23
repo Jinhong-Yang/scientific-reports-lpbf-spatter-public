@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_W14_OUTCOMES",
+  "experiment_id": "W14_NESTED_LOW_DATA",
+  "source_population": "W09_train_only_112_specimens_3584_images",
+  "validation_population": "fixed_32_specimens_1024_images",
+  "held_out_test_access": "PROHIBITED_DURING_SUBSET_SELECTION_TRAINING_AND_MODEL_SELECTION",
+  "subset_sizes_specimens": [14, 28, 56],
+  "subset_realizations": [
+    {"id": "R1", "selection_seed": 63001},
+    {"id": "R2", "selection_seed": 63002},
+    {"id": "R3", "selection_seed": 63003}
+  ],
+  "nested_rule": "Within each realization, the first 14 specimens are a subset of the first 28, which are a subset of the first 56.",
+  "selection_algorithm": {
+    "name": "outcome_blind_standardized_condition_farthest_point",
+    "specimen_features": [
+      "laser_power_w",
+      "scan_speed_mm_s",
+      "line_energy_j_mm",
+      "lamination_direction_deg",
+      "mean_bbox_center_x_fraction",
+      "mean_bbox_center_y_fraction",
+      "mean_log_bbox_area"
+    ],
+    "material_initialization": "one seeded specimen from each material before farthest-point additions",
+    "distance": "mean_squared_Euclidean_after_full_training_specimen_standardization",
+    "tie_break": "seeded_fixed_random_rank_then_specimen_id",
+    "model_outcomes_used": false
+  },
+  "pipeline_replicates": [63001, 63002, 63003],
+  "crossing": "3_sizes_x_3_subset_realizations_x_4_arms_x_3_pipeline_replicates",
+  "arms": ["N1", "NR", "NB", "NP"],
+  "detector_trajectories": 108,
+  "generator_refits": {
+    "NP": 27,
+    "per": "subset_size_x_subset_realization_x_pipeline_replicate",
+    "architecture_and_objective": "W09_F11_with_lambda_0.0035_boundary_0.01_moment_0.02",
+    "training_only_refit": ["model", "latent_bank", "condition_support", "donor_plan"],
+    "full_data_generator_reuse": false
+  },
+  "pool_policy": {
+    "ratio": 0.25,
+    "additional_rows": "one_quarter_of_subset_image_count",
+    "selection": "every_fourth_target_row_starting_at_zero",
+    "NB": "donor_matched_pixel_blend_within_subset",
+    "NR": "additional_augmented_real_within_subset",
+    "NP": "subset_refit_field_generation_within_subset"
+  },
+  "detector_contract": "configs/w12_detector_core.json",
+  "detector_updates": 8960,
+  "primary_checkpoint": 8960,
+  "label_budget_reporting": {
+    "training_specimens": "14_or_28_or_56",
+    "training_images": "448_or_896_or_1792",
+    "validation_specimens": 32,
+    "validation_images": 1024,
+    "rule": "Never describe a training subset size as the total labelled-data budget."
+  },
+  "synthetic_only_branch": "NOT_INCLUDED_OPTIONAL_DIAGNOSTIC",
+  "human_label_review": "EXCLUDED_BY_USER_SCOPE"
+}

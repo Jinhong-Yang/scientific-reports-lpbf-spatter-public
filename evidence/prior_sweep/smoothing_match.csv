@@ -1,0 +1,3 @@
+control_family,strength,mean_validation_mse,target_np_lambda,target_mean_validation_mse,absolute_relative_gap,match_tolerance,match_status
+gaussian_sigma_px,0.5,0.0005997747073053671,0.0035,0.000525637603004725,0.14104223875318098,0.05,UNMATCHED_CLOSEST_ONLY
+heat_tau_px2,0.125,0.0005997747073053671,0.0035,0.000525637603004725,0.14104223875318098,0.05,UNMATCHED_CLOSEST_ONLY

@@ -1,0 +1,105 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T3C
+title: One-factor coefficient sensitivity with common-definition residual scoring
+state: preregistered_effective_upon_protocol_commit_and_hash_receipt
+authority: WO-LPBF-WEAKPHYS-REV02
+inherits_common_architecture_training_and_evaluation: REV02_T3A.yaml
+execution_gate:
+  require_protocol_git_commit: true
+  require_protocol_sha256_in_hashes_json: true
+  require_T1_split_canonical_boxes_and_input_lock: true
+  allowed_pre_T7_data: [train, validation]
+  forbidden_pre_T7: [test_ID_file, test_manifest, test_images, test_labels, test_results]
+  test_evaluation: exclusively_global_T7_one_shot_after_all_T1_to_T6_summaries_frozen
+  no_historical_checkpoint_feature_or_result_cache_reuse: true
+  completed_seed_replacement: prohibited
+  failure_action: retain_manifest_failure_and_stop_completion_claim
+design:
+  reference: newly_trained_F11_alias_G2_at_baseline_coefficients
+  seeds: [41001, 41002, 41003]
+  seed_relation: first_three_of_frozen_ten_generator_seeds
+  factors: [diffusivity_intercept, source_line_energy_coefficient, decay_intercept]
+  relative_changes: [-0.5, 0.5]
+  training_cells: 18
+  design_type: one_factor_at_a_time_all_other_settings_fixed
+  interaction_or_grid_expansion: prohibited
+  baseline_checkpoint_reuse: only_new_REV02_F11_for_the_same_three_seeds
+  rationale: constants_are_heuristic_dimensionless_choices_not_calibrated_material_or_thermal_parameters
+baseline_coefficients:
+  diffusivity: 0.018+0.010*is_SUS+0.004*is_on_axis
+  transport_magnitude: 0.05+0.15*speed_norm
+  transport_x: transport_magnitude*direction_cos
+  transport_y: transport_magnitude*direction_sin
+  source_strength: 0.08+0.42*line_energy_norm+0.05*power_norm
+  decay: 0.65+0.35*speed_norm
+  source_blob_and_geometry: same_canonical_condition_gaussian_as_G2
+  residual: -diffusivity*(u_xx+u_yy)+transport_x*u_x+transport_y*u_y+decay*u-source_strength*gaussian
+variants:
+  - {id: kappa_minus50, parameter: diffusivity_intercept, baseline: 0.018, value: 0.009}
+  - {id: kappa_plus50, parameter: diffusivity_intercept, baseline: 0.018, value: 0.027}
+  - {id: source_minus50, parameter: source_line_energy_coefficient, baseline: 0.42, value: 0.21}
+  - {id: source_plus50, parameter: source_line_energy_coefficient, baseline: 0.42, value: 0.63}
+  - {id: decay_minus50, parameter: decay_intercept, baseline: 0.65, value: 0.325}
+  - {id: decay_plus50, parameter: decay_intercept, baseline: 0.65, value: 0.975}
+training:
+  architecture: exactly_F11_Pirate_architecture_in_REV02_T3A
+  epochs: 10
+  batch_size: 32
+  optimizer: AdamW
+  learning_rate: 0.0007
+  weight_decay: 0.000001
+  scheduler: CosineAnnealingLR_T_max_10_eta_min_1e-5
+  pixel_samples: 128
+  collocation_samples: 32
+  moment_grid_size: 16
+  boundary_samples: 32
+  kl_weight: 0.0002
+  proxy_weight: 0.035
+  boundary_weight: 0.01
+  moment_weight: 0.02
+  regularization_ramp: min(1,epoch/3)
+  gradient_clip_global_norm: 1.0
+  physics_loss_attention: same_residual_based_attention_as_G2
+  boundary_and_moment_targets: unchanged_baseline_box_geometry
+  paired_random_inputs: same_initialization_image_order_latent_noise_pixel_collocation_boundary_draws_for_each_seed_across_all_variants_and_F11
+  checkpoint: minimum_full_validation_pixel_MSE_earliest_epoch_on_exact_tie
+  no_variant_specific_checkpoint_metric: true
+evaluation:
+  shared_specification: REV02_T3A.yaml/evaluation
+  primary_endpoints: [fresh_proxy_RMS_common_baseline_coefficients, PFFD_std]
+  mandatory_secondary_endpoints: [fresh_proxy_RMS_variant_native_coefficients]
+  residual_points_per_image: 32
+  residual_coordinate_seed: 61003
+  residual_coordinate_plan: precompute_once_in_sorted_sample_id_order_as_T1_and_T3A
+  same_fresh_coordinates_for_every_variant_baseline_and_native_scoring: true
+  same_condition_donor_plan_and_latent_noise_draws_per_seed: true
+  common_RMS: evaluate_every_variant_model_with_immutable_baseline_coefficients
+  native_RMS: evaluate_variant_model_with_its_own_training_coefficient_change
+  common_RMS_reason: prevents_metric_definition_changes_from_masquerading_as_model_quality_changes
+  PFFD_std: unchanged_11_feature_definition_train_fitted_frozen_standardization_and_Frechet_estimator_from_T3A
+  aggregate_RMS: mean_over_images_of_sqrt(mean_over_coordinates(residual^2))
+  split_reporting: validation_then_T7_test_in_separate_rows
+reporting:
+  per_seed: variant_value_seed_common_RMS_native_RMS_PFFD_and_paired_changes_vs_fresh_F11
+  across_seed: arithmetic_mean_and_sample_SD_ddof_1
+  relative_change: paired_endpoint_difference_divided_by_same_seed_F11_endpoint_when_denominator_nonzero_else_null_with_flag
+  uncertainty: descriptive_three_seed_dispersion_no_equivalence_claim
+  no_primary_hypothesis_family_addition: true
+  every_variant_and_seed_reported_including_unfavorable_or_failed: true
+  required_method_sentence: The dimensionless proxy constants were heuristic choices rather than independently calibrated material parameters; one-factor plus-or-minus-50-percent sensitivity was therefore evaluated prospectively.
+outputs:
+  local_root: revision_rev02_20260902/results/REV02/T3C
+  large_root: D:/Codex Research/LPBF_REV02_20260902
+  required: [config.yaml, raw/per_seed_sensitivity.csv, raw/paired_baseline_changes.csv, summary.json, figures/coefficient_sensitivity.pdf, RUN_LOG.md]
+  per_run: [resolved_config.yaml, environment_lock, input_hashes, source_hashes, seed, checkpoint_hash, history.csv, run_summary.json]
+planned_implementation:
+  runner: revision_rev02_20260902/scripts/rev02_generator.py
+  evaluator: revision_rev02_20260902/scripts/rev02_generator.py
+  coefficient_interface: explicit_immutable_default_mapping_with_one_frozen_override_per_variant
+  no_experiment_code_before_protocol_commit: true
+  reusable_functions: [physical_coefficients, pde_residual, compute_physics_losses, train_experiment, evaluate_checkpoint]
+  no_unsafe_legacy_main_invocation: true
+reusable_source_versions:
+  src/metal_spatter_pinn/physics.py: 4e313d45765e0a87b6f8a7a9aa80f2cd75a493e5e638ac88c0a8a1f6368dad38
+  src/metal_spatter_pinn/training.py: 8408612bbf9a7db2f98ff7e1417cc8767b5e6709498f86372293b3a789b8c8a3
+  src/metal_spatter_pinn/evaluation.py: 93fdfb5b9b9d3916840e6272a491be05039b52037ee9017629d2f1c10ae69f8c

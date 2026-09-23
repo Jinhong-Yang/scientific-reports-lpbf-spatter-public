@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "runner_sha256": "252c215e2cb8d9ac38ae065bfc8a1e2d50dfdd3fc6adfecf59d67fa10944a11d",
+  "device": "NVIDIA GeForce RTX 5080",
+  "test_payload_accessed": false,
+  "attempts": [
+    {
+      "attempt_id": 1,
+      "started_at": "2026-09-14T20:32:10+09:00",
+      "status": "FAILED_BEFORE_RUNNER_START",
+      "reason": "Start-Process argument quoting split the workspace path at its first space.",
+      "scientific_run_started": false,
+      "checkpoint_written": false,
+      "stderr_log": "runs/new_study/W09_generator_factorial/campaign_stderr.log"
+    },
+    {
+      "attempt_id": 2,
+      "started_at": "2026-09-14T20:33:03+09:00",
+      "status": "COMPLETED",
+      "process_id_at_launch": 22316,
+      "completed_at": "2026-09-14T21:38:22+09:00",
+      "completed_runs": 40,
+      "failed_or_interrupted": 0,
+      "cumulative_generator_gpu_hours": 1.06565739788886,
+      "execution": "sequential frozen 40-run roster; completed identities are verified and skipped",
+      "stdout_log": "runs/new_study/W09_generator_factorial/campaign_stdout.log",
+      "stderr_log": "runs/new_study/W09_generator_factorial/campaign_stderr_retry1.log"
+    }
+  ]
+}

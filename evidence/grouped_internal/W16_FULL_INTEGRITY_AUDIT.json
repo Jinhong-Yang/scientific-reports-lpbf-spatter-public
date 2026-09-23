@@ -1,0 +1,36 @@
+{
+  "audit_name": "W16_FULL_INTEGRITY_AUDIT",
+  "audited_at_utc": "2026-09-23T05:14:01.018151+00:00",
+  "conditions": {
+    "detector_manifest_hash_matches": true,
+    "detector_receipt_complete": true,
+    "detector_receipt_exact_counts": true,
+    "detector_receipt_no_missing_or_failures": true,
+    "detector_receipt_no_test_access": true,
+    "every_detector_valid": true,
+    "every_generator_and_pool_valid": true,
+    "exactly_36_detector_receipts": true,
+    "exactly_nine_generator_summaries": true,
+    "generator_receipt_complete": true,
+    "generator_receipt_exact_counts": true,
+    "generator_receipt_no_missing_or_failures": true,
+    "generator_receipt_no_test_access": true
+  },
+  "problems": {
+    "detectors": [],
+    "generators": []
+  },
+  "schema_version": 1,
+  "scope": "all W16 generator/pool and detector completion artifacts",
+  "status": "PASS",
+  "summary": {
+    "artifact_hashes_checked": 765,
+    "detector_receipts": 36,
+    "detectors_with_problems": 0,
+    "expected_detector_optimizer_updates": 8960,
+    "expected_detectors": 36,
+    "expected_generators": 9,
+    "generator_summaries": 9,
+    "generators_with_problems": 0
+  }
+}

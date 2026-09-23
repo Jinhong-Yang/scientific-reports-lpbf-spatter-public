@@ -1,0 +1,63 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: MASTER
+status: preregistration_before_experiment_code
+source_work_order:
+  id: WO-LPBF-WEAKPHYS-REV02
+  path: C:/Users/WIN/Downloads/작업지시서_LPBF_WEAK_PHYSICS_REV02.md
+  sha256: 522c3a5b7d50ed275701327b91338489e4a0c924a04748485029e8f96298a3fa
+authority: User requests experiments and a full manuscript revision; the work order is interpreted transparently where internally inconsistent, never as permission to preordain results or erase exposure history.
+scope:
+  corpus: Existing 176-specimen, 5632-image VS/VL-derived corpus only; missing TS.z05--TS.z07 remain unrecoverable.
+  inference: Prospectively locked re-split evaluation within the previously studied corpus; not a historically untouched independent test corpus.
+  exclusions: [new_external_builds, new_equipment, time_temperature_pairs, FEM_CFD_pairs, physical_parameter_identification, newly_trained_G3, newly_trained_D3]
+paths:
+  project_root: C:/Codex Research/metal_spatter_pinn
+  revision_root: C:/Codex Research/metal_spatter_pinn/revision_rev02_20260902
+  artifact_root: D:/Codex Research/LPBF_REV02_20260902
+  public_manifests: data/{train,validation}.csv
+  sealed_manifest: D:/Codex Research/LPBF_REV02_20260902/sealed/test_manifest.csv
+  sealed_ids: D:/Codex Research/LPBF_REV02_20260902/sealed/test_specimens.json
+  task_outputs: results/REV02/{task_id}
+seeds:
+  split: 61001
+  donor_plan: 61002
+  generator_evaluation: 61003
+  audit_controls: 61004
+  detector_bootstrap: 61005
+  blur_controls: 61006
+  pool_order: 61007
+  generator: [41001, 41002, 41003, 41004, 41005, 41006, 41007, 41008, 41009, 41010]
+  detector: [51001, 51002, 51003]
+  coefficient_sensitivity: [41001, 41002, 41003]
+freeze_and_provenance:
+  protocol_before_code: All task YAMLs and interpretation notes are committed locally and SHA256 recorded before new experiment code is authored.
+  code_before_run: Source manifest, environment lock and implementation Git commit/hash receipt precede each execution batch.
+  timestamps: Actual UTC ISO8601 timestamps; no invented or backdated events.
+  event_chain: Append-only JSONL events linked by SHA256, plus access_chronology.json projection.
+  split_creation_exception: One data-steward process may read the existing full metadata manifest, assign and seal new test IDs/rows; it may not open test pixels or test label JSON.
+  pretest_complete: All training, validation, choices, thresholds, code, fixed checkpoint roster and task receipts frozen. Test-dependent cells explicitly remain locked_pending_T7.
+  test_campaign: One global sealed campaign after all pretest receipts, comprising all fixed generator and detector evaluations. No test-based choices.
+  no_absolute_blinding_claim: This is application-level access control and documented chronology, not an independent OS-level or third-party proof of historical blindness.
+failure_policy:
+  completed_seed_replacement: forbidden
+  seed_addition: forbidden
+  failed_runs: Preserve configuration, inputs, logs, failure and partial artifacts in MANIFEST; never silently drop.
+  resume: Same run/seed/config only from a validated optimizer, RNG, sampler and step state; append interruption/resume events.
+  technical_amendment: Before affected execution and before T7, document cause, original outputs, changed source hashes and scope. No outcome-driven hyperparameter or endpoint changes.
+  missing_cells: Block completion and T7 unless resolved by a documented technical recovery; never fabricate zero-missing status.
+reproducibility:
+  device: One NVIDIA RTX 5080 GPU, serialized training jobs.
+  deterministic: Seed Python, NumPy, torch and CUDA; deterministic cuDNN; no benchmarking; deterministic-algorithm warnings captured. Do not promise cross-platform bitwise equality.
+  environment: env/pip_freeze.txt and env/versions.json, including GPU, driver, CUDA, torch, torchvision, pycocotools and code hashes.
+  storage: Large checkpoints, full resume state and generated pools on the scoped D drive; no deletion of historical or completed run artifacts.
+  run_contract: Each run records protocol receipt, environment/input/source hashes, start/end/status, elapsed time, peak allocated/reserved CUDA memory, seed and all selected checkpoint hashes.
+output_contract:
+  required_per_task: [config.yaml, raw/*.csv, summary.json, figures/*.pdf, RUN_LOG.md]
+  placeholders: Mark not-yet-executed cells pending, never present a placeholder as a result.
+  final: [protocol, splits, access_chronology.json, tables, figures, env, MANIFEST.md, REVISION_RESPONSE.md, overleaf_clean, overleaf_supplement, release]
+reporting:
+  negative_results: Conditional on measured outcomes only. Non-significance is not equivalence or proof that useful ratios do not exist.
+  primary_factorial_endpoints: [fresh_collocation_proxy_RMS, reconstruction_PSNR, PFFD_std, within_condition_one_minus_SSIM, boundary_energy, moment_centroid_error, moment_spread_error]
+  mandatory_secondary: [reconstruction_SSIM]
+  abstract_internal_codes: forbidden
+  historical_preservation: Immutable historical release and source paths remain intact, indexed and snapshotted under results/historical; do not move originals and break provenance.

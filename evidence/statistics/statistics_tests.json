@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-14T09:38:43.034896+00:00",
+  "status": "PASS_WITH_LIMITATION",
+  "evidence_layer": "SYNTHETIC_FIXTURE_ONLY",
+  "observed_study_outcomes_used": false,
+  "test_split_used": false,
+  "primary_family": [
+    "NP-NB",
+    "NP-NF",
+    "NP-N1",
+    "NP-NR"
+  ],
+  "primary_family_status": "PROPOSED_NOT_W08_FROZEN",
+  "confidence": {
+    "ordinary_paired_cluster_interval": 0.95,
+    "four_comparison_bonferroni_interval": 0.9875,
+    "bootstrap_draws_proposal": 20000,
+    "bootstrap_draws_used_in_fixture": 1000
+  },
+  "fixtures": {
+    "null_clustered": {
+      "effect": 0.0,
+      "clusters": 32,
+      "replicates": 5,
+      "simulations": 300,
+      "bootstrap_draws": 1000,
+      "coverage": 0.9533333333333334,
+      "coverage_mc_se": 0.012177696674506891,
+      "zero_rejection_rate": 0.04666666666666667,
+      "zero_rejection_mc_se": 0.012177696674506895,
+      "mean_interval_width": 0.01639108736248143,
+      "mean_estimate": 0.00028118917406371114,
+      "synthetic_cluster_sd": 0.02,
+      "synthetic_replicate_sd": 0.005,
+      "synthetic_residual_sd": 0.01
+    },
+    "known_effect_clustered": {
+      "effect": 0.02,
+      "clusters": 32,
+      "replicates": 5,
+      "simulations": 300,
+      "bootstrap_draws": 1000,
+      "coverage": 0.94,
+      "coverage_mc_se": 0.013711309200802093,
+      "zero_rejection_rate": 0.9966666666666667,
+      "zero_rejection_mc_se": 0.0033277731404159692,
+      "mean_interval_width": 0.01643937168584392,
+      "mean_estimate": 0.019965226944221832,
+      "synthetic_cluster_sd": 0.02,
+      "synthetic_replicate_sd": 0.005,
+      "synthetic_residual_sd": 0.01
+    },
+    "five_seed_sign_flip": {
+      "n": 5,
+      "observed_abs_mean": 1.0,
+      "two_sided_p": 0.0625,
+      "enumerations": 32
+    },
+    "factorial": {
+      "optical_proxy_main": 2.0,
+      "boundary_moment_main": 3.0,
+      "interaction": 2.0
+    },
+    "holm": {
+      "c1": 0.03,
+      "c2": 0.04,
+      "c3": 0.04,
+      "c4": null
+    },
+    "raw_record_coco_resampling": {
+      "known_difference_fixture": {
+        "draws": 40,
+        "clusters": 4,
+        "pipeline_replicates": 2,
+        "mean_difference": 0.4584158415841584,
+        "minimum_difference": 0.0,
+        "maximum_difference": 1.0,
+        "duplicate_cluster_draws": 35,
+        "maximum_resampled_images_per_replicate": 4,
+        "paired_cluster_and_replicate_draws": true,
+        "new_evaluation_image_ids_assigned_by_coco_wrapper": true
+      },
+      "aa_fixture": {
+        "draws": 20,
+        "clusters": 4,
+        "pipeline_replicates": 2,
+        "mean_difference": 0.0,
+        "minimum_difference": 0.0,
+        "maximum_difference": 0.0,
+        "duplicate_cluster_draws": 18,
+        "maximum_resampled_images_per_replicate": 4,
+        "paired_cluster_and_replicate_draws": true,
+        "new_evaluation_image_ids_assigned_by_coco_wrapper": true
+      }
+    }
+  },
+  "acceptance": {
+    "null_coverage_reasonable": true,
+    "null_type_i_below_0p10": true,
+    "known_effect_mean_close": true,
+    "five_seed_minimum_two_sided_sign_flip_p_is_0p0625": true,
+    "factorial_fixture_matches": true,
+    "holm_fixture_matches": true,
+    "raw_record_coco_resampling_aa_is_zero": true,
+    "raw_record_coco_resampling_exercised_duplicate_clusters": true
+  },
+  "planning_grid_rows": 36,
+  "limitations": [
+    "Synthetic variance components are test fixtures, not estimates from the LPBF study.",
+    "The planning grid uses a normal approximation and must be recalibrated from W06 dev-pilot variance components.",
+    "The raw-record COCO fixture validates paired resampling mechanics; production intervals still require frozen N2 predictions and 20,000-draw Monte Carlo checks.",
+    "External-build uncertainty cannot be estimated because no independent cohort is available."
+  ]
+}

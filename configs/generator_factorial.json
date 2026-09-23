@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "status": "W08_APPROVED_PRE_TEST",
+  "experiment_id": "W09_N2_GENERATOR_FACTORIAL",
+  "evidence_layer": "N2_NEW_STUDY",
+  "data_roles": ["train", "validation"],
+  "test_access": "PROHIBITED",
+  "image_size": 64,
+  "condition_dimension": 13,
+  "arms": {
+    "F00": {"proxy": 0.0, "boundary": 0.0, "moment": 0.0},
+    "F01": {"proxy": 0.0, "boundary": 0.01, "moment": 0.02},
+    "F10": {"proxy": 0.0035, "boundary": 0.0, "moment": 0.0},
+    "F11": {"proxy": 0.0035, "boundary": 0.01, "moment": 0.02}
+  },
+  "seeds": [61001, 61002, 61003, 61004, 61005, 61006, 61007, 61008, 61009, 61010],
+  "model": {
+    "family": "ConditionalVariationalField",
+    "decoder_type": "pirate",
+    "latent_dimension": 16,
+    "hidden_dimension": 64,
+    "fourier_frequencies": [1.0, 2.0, 4.0, 8.0],
+    "residual_blocks": 3,
+    "conditional_prior": false
+  },
+  "training": {
+    "epochs": 10,
+    "batch_size": 32,
+    "drop_last": true,
+    "workers": 0,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0007,
+    "weight_decay": 0.000001,
+    "scheduler": "CosineAnnealingLR",
+    "scheduler_eta_min": 0.00001,
+    "pixel_samples": 128,
+    "collocation_samples": 32,
+    "boundary_samples": 32,
+    "moment_grid_size": 16,
+    "kl_weight": 0.0002,
+    "physics_warmup_epochs": 3,
+    "gradient_clip_norm": 1.0,
+    "precision": "float32",
+    "paired_random_streams_across_arms": true
+  },
+  "checkpoint": {
+    "selection_metric": "full_validation_posterior_mean_reconstruction_mse",
+    "selection_direction": "minimum",
+    "exact_tie_rule": "earliest_epoch",
+    "resume_state": "atomic_after_each_epoch",
+    "automatic_checkpoint_deletion": false
+  },
+  "required_run_artifacts": [
+    "identity.json",
+    "resolved_config.json",
+    "history.csv",
+    "best.pt",
+    "resume.pt",
+    "summary.json"
+  ]
+}

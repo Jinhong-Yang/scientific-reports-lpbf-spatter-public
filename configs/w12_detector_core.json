@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_W12_DETECTOR_OUTCOMES",
+  "experiment_id": "W12_N2_CORE_DETECTORS",
+  "data_roles": {
+    "training_real": "train_112_specimens_3584_images",
+    "validation_real": "validation_32_specimens_1024_images",
+    "held_out_test_access": "PROHIBITED_DURING_TRAINING_AND_SELECTION",
+    "grouping_unit": "specimen_with_views_together"
+  },
+  "label_policy": {
+    "source": "inherited_target",
+    "unit": "inherited_bbox_region",
+    "physical_semantics": "unverified",
+    "human_review": "EXCLUDED_BY_USER_SCOPE"
+  },
+  "ratio_policy": {
+    "selected_synthetic_to_base_real_roster_ratio": 0.25,
+    "selection_status": "PREAPPROVED_FALLBACK",
+    "reason": "The approved 244-trajectory matrix allocates no additional ratio-search trajectories; the protocol explicitly freezes 0.25 as the fallback when the grid cannot be completed.",
+    "source_pool_rows_per_arm_seed": 3584,
+    "selected_additional_rows": 896,
+    "selected_indices": "every_fourth_row_starting_at_zero",
+    "sampling": "seeded_shuffle_without_replacement_over_3584_base_plus_896_additional_rows",
+    "expected_additional_fraction_per_complete_roster_epoch": 0.2,
+    "test_outcome_used": false
+  },
+  "arms": {
+    "N0": "real_only_without_conventional_augmentation",
+    "N1": "real_only_with_conventional_augmentation",
+    "NR": "augmented_real_base_plus_896_additional_augmented_real_rows",
+    "NB": "augmented_real_base_plus_896_donor_matched_pixel_blend_rows",
+    "NF": "augmented_real_base_plus_896_data_only_field_rows",
+    "NP": "augmented_real_base_plus_896_full_optical_prior_field_rows",
+    "NS": "augmented_real_base_plus_896_matched_non_PDE_smoothing_control_rows",
+    "ND": "augmented_real_base_plus_896_compact_conditional_diffusion_rows"
+  },
+  "augmentation": {
+    "applies_to": "real_presentations_in_N1_NR_NB_NF_NP_NS_ND",
+    "horizontal_flip_probability": 0.5,
+    "brightness_uniform": [0.8, 1.2],
+    "contrast_uniform": [0.8, 1.2],
+    "order": ["horizontal_flip_and_box_reflection", "brightness", "contrast"],
+    "synthetic_augmentation": false
+  },
+  "models": {
+    "fasterrcnn": {
+      "architecture": "torchvision_fasterrcnn_resnet50_fpn_v2",
+      "weights": "FasterRCNN_ResNet50_FPN_V2_Weights.COCO_V1",
+      "weights_path": "historical/LPBF_REV02_20260902/torch_cache/hub/checkpoints/fasterrcnn_resnet50_fpn_v2_coco-dd69338a.pth",
+      "weights_sha256_prefix": "dd69338a",
+      "trainable_backbone_layers": 3,
+      "head_classes_including_background": 2,
+      "foreground_internal_label": 1
+    },
+    "retinanet": {
+      "architecture": "torchvision_retinanet_resnet50_fpn_v2",
+      "weights": "RetinaNet_ResNet50_FPN_V2_Weights.COCO_V1",
+      "weights_path": "historical/LPBF_REV02_20260902/torch_cache/hub/checkpoints/retinanet_resnet50_fpn_v2_coco-5905b1c5.pth",
+      "weights_sha256_prefix": "5905b1c5",
+      "trainable_backbone_layers": 3,
+      "head_foreground_classes": 1,
+      "foreground_internal_label": 0,
+      "reported_category_id": 1
+    }
+  },
+  "model_common": {
+    "input_min_size": 300,
+    "input_max_size": 300,
+    "score_threshold": 0.05,
+    "nms_threshold": 0.5,
+    "detections_per_image": 100
+  },
+  "optimization": {
+    "optimizer": "SGD",
+    "learning_rate": 0.003,
+    "momentum": 0.9,
+    "weight_decay": 0.0001,
+    "precision": "bfloat16_autocast",
+    "gradient_clip_norm": 10.0,
+    "micro_batch": 4,
+    "effective_batch": 4,
+    "gradient_accumulation": 1,
+    "optimizer_updates": 8960,
+    "validation_milestones": [896, 1792, 4480, 8960],
+    "primary_checkpoint": 8960,
+    "learning_rate_step_updates": 2688,
+    "learning_rate_gamma": 0.2,
+    "validation_adaptive_stopping": false,
+    "resume_interval_updates": 256
+  },
+  "trajectory_roster": {
+    "primary": {
+      "family": "fasterrcnn",
+      "arms": ["N0", "N1", "NR", "NB", "NF", "NP", "NS", "ND"],
+      "pipeline_seeds": [61001, 61002, 61003, 61004, 61005, 61006, 61007, 61008, 61009, 61010],
+      "trajectories": 80
+    },
+    "secondary": {
+      "family": "retinanet",
+      "arms": ["N1", "NR", "NB", "NP"],
+      "detector_seeds": [62001, 62002, 62003, 62004, 62005],
+      "pool_seed_mapping": {
+        "62001": 61001,
+        "62002": 61002,
+        "62003": 61003,
+        "62004": 61004,
+        "62005": 61005
+      },
+      "trajectories": 20
+    },
+    "total": 100
+  },
+  "metrics": {
+    "selection_and_primary_population_metric": "official_pooled_COCO_AP_50_95",
+    "companions": ["COCO_AP50", "COCO_AP75", "COCO_AP_small", "COCO_AP_medium", "COCO_AP_large", "COCO_AR100"],
+    "evaluator": "pycocotools_COCOeval_bbox",
+    "raw_predictions_retained": true,
+    "all_validation_milestones_retained": true,
+    "final_per_specimen_metrics_retained": true
+  },
+  "checkpointing": {
+    "retain_all_four_milestone_model_optimizer_sampler_states": true,
+    "atomic_resume_state": true,
+    "completed_seed_replacement": false,
+    "automatic_batch_or_precision_change": false
+  },
+  "compute": {
+    "device": "NVIDIA GeForce RTX 5080",
+    "cumulative_project_ceiling_gpu_hours": 130,
+    "maximum_continuous_device_session_hours": 12,
+    "paid_compute": false
+  }
+}

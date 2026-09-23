@@ -1,0 +1,31 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T3B
+status: preregistration_before_experiment_code
+pool:
+  count_per_arm: 7168
+  arms: {G1: F00, G2: F11, D5_pixel: no_neural_field}
+  train_only: true
+  target_order: Each sorted canonical training row repeated twice, then balanced into consecutive generator-seed allocations.
+  generator_seeds: [41001,41002,41003,41004,41005,41006,41007,41008,41009,41010]
+  allocations: [717,717,717,717,717,717,717,717,716,716]
+  donor_plan_seed: 61002
+  donor_eligibility: Same material and view as target; nearest min(64,n) training conditions in normalized dimensions [0,1,2,7,8,9,10]. Stable tie-break by sample_id.
+  donor_sampling: Two draws with replacement from the eligible nearest set; self-pairs permitted and counted, identically for all arms.
+  alpha: 0.2 + 0.6*U(0,1), float64 round-trip serialization
+  epsilon: Explicit stored 16-dimensional independent standard-normal vector per row
+  neural_latent: alpha*posterior_mean_a+(1-alpha)*posterior_mean_b+0.08*epsilon
+  pixel_control: alpha*Ia+(1-alpha)*Ib in grayscale [0,1] after resize to 64 by 64; no latent noise or pixel noise; resize bilinear to 300 by 300, clip, round and write lossless grayscale PNG.
+  neural_output: Render 64 by 64, resize bilinear to 300 by 300, clip, round and write lossless grayscale PNG with the same output conversion as D5.
+  target_box: Canonical conditioning target box from T1, identical JSON and manifest; do not substitute a donor box.
+  freeze: Ordered plan with target, donor IDs/paths/hashes, alpha, epsilon, generator seed/index and canonical box is hashed before any arm is rendered.
+  required_checks: [7168_rows_each, identical_ordered_donor_triples, identical_target_boxes, identical_seed_allocations, zero_JSON_manifest_box_mismatches, train_only_donors, image_label_manifest_hashes]
+detector:
+  ratios: Union of validation-selected D2 and D4 ratios under T6A; no independent D5 selection.
+  main_family: All three T2 axes, four milestones, three detector seeds; pairwise comparisons to D2 and D4 only at each comparator's selected ratio.
+  second_family: T6B B4 only, transferred ratios and same three seeds.
+inference:
+  primary_difference: study_mAP(D2 or D4)-study_mAP(D5) at matched family/ratio/axis/milestone/seed.
+  secondary: Official COCO AP differences; seed-by-specimen clustered bootstrap as frozen in T5.
+  no_equivalence_margin: No TOST; a CI containing zero is failure to establish a difference, not proof of no additional utility.
+  reporting_branch: If neural augmentation has no demonstrated advantage over donor-matched pixel blends, state that added utility was not established under these budgets. If a reproducible advantage is supported, report its direction, interval and scope without suppressing it.
+acceptance: All planned matched controls complete or explicitly incomplete with failures retained; no test-dependent ratio choices.

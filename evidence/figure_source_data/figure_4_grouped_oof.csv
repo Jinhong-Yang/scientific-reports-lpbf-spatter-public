@@ -1,0 +1,4 @@
+analysis,contrast,estimate,minimum_partition_effect,maximum_partition_effect,partition_seeds,development_specimens,status
+development_grouped_oof,NP-NB,0.001689578963199545,-0.0015166064697665904,0.006411458773630141,3,144,secondary_internal_descriptive_no_external_validity
+development_grouped_oof,NP-N1,-0.006187511199231517,-0.007721461604823232,-0.005025200391592932,3,144,secondary_internal_descriptive_no_external_validity
+development_grouped_oof,NP-NR,-0.009047099644953796,-0.013553306219229344,-0.006249017645887034,3,144,secondary_internal_descriptive_no_external_validity

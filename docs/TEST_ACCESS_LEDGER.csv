@@ -1,0 +1,6 @@
+dataset_or_split,unit,access_state,evidence,allowed_future_use
+study_v1/train,specimen-grouped images,ACCESSED,historical training manifests and runs,Training and bounded reproduction
+study_v1/validation,specimen-grouped images,ACCESSED,historical generator and detector evaluation,Model selection and bounded reproduction with explicit disclosure
+study_v1/test,32 specimens / 1024 images,ACCESSED,historical test evaluation artifacts,Not a pristine final or external cohort; use only with explicit accessed-set disclosure
+Independent external cohort,manufacturing build or source-independent specimens,NOT_AVAILABLE,no artifact,Required for external-validation claim
+N2 pretest identifier display,one historical test specimen identifier / two group-view rows,BOUNDED_PROTOCOL_DEVIATION,docs/PROTOCOL_INCIDENT_001_TEST_IDENTIFIER_DISPLAY.md,No model or analysis use; image label prediction and metric payload remain locked

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_W11_POOL_OUTPUT",
+  "experiment_id": "W11_COMMON_ROSTER_GENERATION_QUALITY",
+  "data_roles": {
+    "feature_scaler_fit": "train_real_3584",
+    "reference_population": "validation_real_1024",
+    "generated_population": "same_ordered_validation_target_roster_1024_per_arm_seed",
+    "held_out_test_access": "PROHIBITED"
+  },
+  "arms": ["NB", "NF", "NP", "NS", "ND"],
+  "seeds": [61001, 61002, 61003, 61004, 61005, 61006, 61007, 61008, 61009, 61010],
+  "distribution_metrics": {
+    "pffd10": {
+      "features": [
+        "mean_intensity",
+        "max_intensity",
+        "centroid_x",
+        "centroid_y",
+        "variance_x",
+        "variance_y",
+        "bright_area_fraction",
+        "bbox_width_fraction",
+        "bbox_height_fraction",
+        "component_count"
+      ],
+      "duplicate_removed": "radiance_mass_equals_mean_intensity_on_fixed_size_images",
+      "standardization": "coordinatewise_center_and_population_sd_fit_on_train_real_only",
+      "covariance_regularization": 1e-08,
+      "estimator": "Gaussian_Frechet_distance"
+    },
+    "inception_fid_kid": {
+      "backbone": "torchvision_inception_v3_IMAGENET1K_V1",
+      "activation": "Mixed_6e_then_spatial_average_768_dimensions",
+      "weights_path": "vendor/model_weights/inception_v3_google-0cc3c7bd.pth",
+      "weights_sha256": "0cc3c7bd75056d25e46cba549dc184522069b81e9787eff6df84f397bd52a5ef",
+      "preprocessing": "grayscale_repeated_to_RGB_bilinear_resize_299_ImageNet_normalization",
+      "fid_covariance_regularization": 1e-08,
+      "kid_kernel": "(x_dot_y/768+1)^3",
+      "kid_estimator": "full_population_unbiased_MMD2_U_statistic",
+      "interpretation": "descriptive_natural_image_feature_sensitivity_not_domain_validation"
+    }
+  },
+  "paired_metrics": {
+    "texture": [
+      "absolute_log_radial_power_spectrum_difference",
+      "laplacian_variance_absolute_difference"
+    ],
+    "operational_geometry": [
+      "intensity_centroid_distance_to_inherited_bbox_center",
+      "bright_bbox_width_absolute_error",
+      "bright_bbox_height_absolute_error"
+    ],
+    "scope": "operational_inherited_bbox_region_only_physical_semantics_unverified"
+  },
+  "diversity": {
+    "metric": "mean_pairwise_one_minus_SSIM",
+    "pairing": "all_45_seed_pairs_at_each_identical_target_then_mean_over_1024_targets",
+    "data_range": 1.0,
+    "ssim_window": 7
+  },
+  "memorization_screen": {
+    "reference": "train_real_3584",
+    "calibration_queries": "validation_real_1024",
+    "feature_backbone": "torchvision_resnet18_IMAGENET1K_V1_512D_cosine",
+    "feature_weights_path": "historical/LPBF_REV02_20260902/torch_cache/hub/checkpoints/resnet18-f37072fd.pth",
+    "feature_weights_sha256": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec",
+    "flip_invariant": true,
+    "thresholds": "validation_to_train_feature_q01_and_nearest_feature_reference_SSIM_q99",
+    "decision_rule": "exact_original_or_horizontal_flip OR feature_min_le_q01 OR nearest_reference_ssim_ge_q99",
+    "phash": "reported_diagnostic_only",
+    "interpretation": "calibrated_similarity_screen_not_proof_of_memorization_or_absence"
+  },
+  "label_validity": {
+    "human_review": "EXCLUDED_BY_USER_SCOPE",
+    "status": "SCOPE_LIMITED_INHERITED_OPERATIONAL_TARGET_ONLY",
+    "permitted_claim": "byte_and_roster_alignment_of_inherited_bbox_region",
+    "prohibited_claims": [
+      "human_validated_label_semantics",
+      "physical_object_validity",
+      "independent_rater_agreement",
+      "corrected_label_effect"
+    ]
+  },
+  "aggregation": {
+    "per_arm_seed_rows": 50,
+    "arm_summary": "mean_and_sample_sd_across_ten_generator_seeds",
+    "positive_result_required": false
+  }
+}

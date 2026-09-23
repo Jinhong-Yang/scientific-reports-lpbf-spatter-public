@@ -1,0 +1,185 @@
+{
+  "artifacts": [
+    {
+      "fold": 1,
+      "partition_seed": 64001,
+      "path": "data/manifests/w16/seed64001_fold1_train.csv",
+      "role": "train",
+      "rows": 3072,
+      "sha256": "dce830292c9b3de8378725e29b28f0a99e9094f8924f1c4abaa9abe55e0134a5",
+      "specimens": 96
+    },
+    {
+      "fold": 1,
+      "partition_seed": 64001,
+      "path": "data/manifests/w16/seed64001_fold1_oof.csv",
+      "role": "oof",
+      "rows": 1536,
+      "sha256": "4f64439865b0a390fbd17b6ecd92f5cd7d16752608a3234faa5dff34c23f5b6a",
+      "specimens": 48
+    },
+    {
+      "fold": 2,
+      "partition_seed": 64001,
+      "path": "data/manifests/w16/seed64001_fold2_train.csv",
+      "role": "train",
+      "rows": 3072,
+      "sha256": "1fdb8d5c1e2cc779cf055e8255a8436e6c822b7f8ea86e906f95de5b186cc739",
+      "specimens": 96
+    },
+    {
+      "fold": 2,
+      "partition_seed": 64001,
+      "path": "data/manifests/w16/seed64001_fold2_oof.csv",
+      "role": "oof",
+      "rows": 1536,
+      "sha256": "366d39afe297433a593ba2fc4eef32ad81873918e1abfa48b01d14961033b7b7",
+      "specimens": 48
+    },
+    {
+      "fold": 3,
+      "partition_seed": 64001,
+      "path": "data/manifests/w16/seed64001_fold3_train.csv",
+      "role": "train",
+      "rows": 3072,
+      "sha256": "a8da77b5be728a4451689aebd322c7cbfae311054515a520cdf4436960fe1629",
+      "specimens": 96
+    },
+    {
+      "fold": 3,
+      "partition_seed": 64001,
+      "path": "data/manifests/w16/seed64001_fold3_oof.csv",
+      "role": "oof",
+      "rows": 1536,
+      "sha256": "1f3a62b1ba6106736768bb04c3f0df5b48b43bf3983d0a9b5f372872d8281ad2",
+      "specimens": 48
+    },
+    {
+      "fold": 1,
+      "partition_seed": 64002,
+      "path": "data/manifests/w16/seed64002_fold1_train.csv",
+      "role": "train",
+      "rows": 3104,
+      "sha256": "7bfb376a0c4e6cee24c5bc0cfd270cde7dfde3df32f210bbee7bc76471f7be24",
+      "specimens": 97
+    },
+    {
+      "fold": 1,
+      "partition_seed": 64002,
+      "path": "data/manifests/w16/seed64002_fold1_oof.csv",
+      "role": "oof",
+      "rows": 1504,
+      "sha256": "e984d11e877de3bc1aefbd4d53c546ac1ca2d6b6e0a11112844ab6c4d519456b",
+      "specimens": 47
+    },
+    {
+      "fold": 2,
+      "partition_seed": 64002,
+      "path": "data/manifests/w16/seed64002_fold2_train.csv",
+      "role": "train",
+      "rows": 3072,
+      "sha256": "c2e6230cfc63653b6645229b89ead88a5f753fa68af28403fbd3cf2862802e44",
+      "specimens": 96
+    },
+    {
+      "fold": 2,
+      "partition_seed": 64002,
+      "path": "data/manifests/w16/seed64002_fold2_oof.csv",
+      "role": "oof",
+      "rows": 1536,
+      "sha256": "463876e6017e8fe97478a86c026bb710abba02529e9a18a6e2c73faf5db483b3",
+      "specimens": 48
+    },
+    {
+      "fold": 3,
+      "partition_seed": 64002,
+      "path": "data/manifests/w16/seed64002_fold3_train.csv",
+      "role": "train",
+      "rows": 3040,
+      "sha256": "8b3612738f456d34da4c9c1332efe98f683d33ff0385f22823e1412b96162b3e",
+      "specimens": 95
+    },
+    {
+      "fold": 3,
+      "partition_seed": 64002,
+      "path": "data/manifests/w16/seed64002_fold3_oof.csv",
+      "role": "oof",
+      "rows": 1568,
+      "sha256": "6c3f2b82d25d75db71f53af39b248171ebd0c52ba4e27d44f9e4d6af60828e0d",
+      "specimens": 49
+    },
+    {
+      "fold": 1,
+      "partition_seed": 64003,
+      "path": "data/manifests/w16/seed64003_fold1_train.csv",
+      "role": "train",
+      "rows": 3104,
+      "sha256": "50e3e6588e202c58d5740a014bae8b12b4f0f9bdb1c2fddab9a4f83a58ea1959",
+      "specimens": 97
+    },
+    {
+      "fold": 1,
+      "partition_seed": 64003,
+      "path": "data/manifests/w16/seed64003_fold1_oof.csv",
+      "role": "oof",
+      "rows": 1504,
+      "sha256": "a45c72e36aafd99b604214b424943550d992de878e2240255f7876e64e28699a",
+      "specimens": 47
+    },
+    {
+      "fold": 2,
+      "partition_seed": 64003,
+      "path": "data/manifests/w16/seed64003_fold2_train.csv",
+      "role": "train",
+      "rows": 3040,
+      "sha256": "b4fefa8f52f6d2f34d69622ef202c2c72ef4d4be405922e74ed248301c92f97f",
+      "specimens": 95
+    },
+    {
+      "fold": 2,
+      "partition_seed": 64003,
+      "path": "data/manifests/w16/seed64003_fold2_oof.csv",
+      "role": "oof",
+      "rows": 1568,
+      "sha256": "285608c3673bc3ace277c580da4a1a019f9e7cb02bcc7262621a3d57641d4880",
+      "specimens": 49
+    },
+    {
+      "fold": 3,
+      "partition_seed": 64003,
+      "path": "data/manifests/w16/seed64003_fold3_train.csv",
+      "role": "train",
+      "rows": 3072,
+      "sha256": "afc7a7122ffa368c50ac62167e9ef5928a596fd1928afee8406cb9f2aabca945",
+      "specimens": 96
+    },
+    {
+      "fold": 3,
+      "partition_seed": 64003,
+      "path": "data/manifests/w16/seed64003_fold3_oof.csv",
+      "role": "oof",
+      "rows": 1536,
+      "sha256": "c281796e2f1721c95516377f063413ea3c4a98efae98faa2e7a7aaa2c8aa4aab",
+      "specimens": 48
+    }
+  ],
+  "config_sha256": "ee8a7a3baf31e52723937e84a53a0316bd3b1c41ea9283a42b152f63352216c2",
+  "development_rows": 4608,
+  "development_specimens": 144,
+  "folds_per_partition": 3,
+  "held_out_test_image_or_label_payload_accessed": false,
+  "held_out_test_rows_read": 0,
+  "partition_seeds": [
+    64001,
+    64002,
+    64003
+  ],
+  "protocol_incident_disclosure": "docs/PROTOCOL_INCIDENT_001_TEST_IDENTIFIER_DISPLAY.md",
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "schema_version": 1,
+  "source_manifest_hashes": {
+    "train": "48dad6a779c48f1a1dd052f586285ea236f2ab64d56aa43d34386a93bf6408cc",
+    "validation": "9328a7c0705d5561f2196121faf4f89ac30837fd951f9615116189e06313c502"
+  },
+  "status": "PASS"
+}

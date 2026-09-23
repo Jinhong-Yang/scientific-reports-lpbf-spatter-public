@@ -1,0 +1,32 @@
+{
+  "audit_name": "W14_FULL_INTEGRITY_AUDIT",
+  "audited_at_utc": "2026-09-23T02:18:19.995799+00:00",
+  "completeness_receipt": {
+    "completed_trajectories": 108,
+    "failure_records": [],
+    "missing_run_ids": [],
+    "planned_trajectories": 108,
+    "status": "COMPLETE",
+    "test_payload_accessed": false
+  },
+  "conditions": {
+    "completeness_receipt_complete": true,
+    "completeness_receipt_exact_count": true,
+    "completeness_receipt_no_failures": true,
+    "completeness_receipt_no_missing": true,
+    "completeness_receipt_no_test_access": true,
+    "every_trajectory_completed": true,
+    "exactly_108_receipts": true
+  },
+  "problems": [],
+  "schema_version": 1,
+  "scope": "all W14 completion receipts and every receipt-listed artifact hash",
+  "status": "PASS",
+  "summary": {
+    "artifact_hashes_checked": 2053,
+    "expected_optimizer_updates": 8960,
+    "expected_trajectories": 108,
+    "trajectories_with_problems": 0,
+    "trajectory_receipts": 108
+  }
+}

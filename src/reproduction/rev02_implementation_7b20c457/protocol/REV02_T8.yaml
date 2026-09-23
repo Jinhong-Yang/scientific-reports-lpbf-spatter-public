@@ -1,0 +1,35 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T8
+status: preregistration_before_experiment_code
+deliverable: Full IEEE Access first-submission-ready Overleaf source package, clean main PDF and separate supplement, conditional on all required experiments and integrity checks being complete.
+baseline: Preserve v49 and create new REV02 manuscript files; copy author metadata, biographies, supplied photos and approved AI disclosure without inventing author approvals.
+timing: Literature/methods/checklist structure may be prepared before T7; all quantitative Results/Abstract/Discussion/Conclusion and title depend on completed fixed evaluation.
+title:
+  scope: Always single-corpus internal re-split, image-only weak proxy, not validated thermofluid physics.
+  family_agreement: Assess signed effect directions and uncertainty across matched budgets; retain broader detector wording only if both evaluated families support the same bounded conclusion.
+  disagreement: Explicitly scope the title to architecture-dependent evidence and the corpus; do not hide discordance.
+abstract:
+  first_three_sentences: Describe the constructed image generator, prospective evaluation design and actual principal finding in plain language.
+  forbidden_codes: [G0,G1,G2,G2N,G3,D0,D1,D2,D3,D4,D5,F00,F01,F10,F11,B1,B2,B3,B4,Route C,PFFD_std]
+  scope_disclosure: Existing corpus, prior analytic exposure, no paired thermophysical trajectories or external build validation.
+content:
+  internal_labels: Remove obsolete Route C/C2--C4/E1 workflow codes; preserve truthful prior-corpus analytic history in ordinary prose.
+  code_table: At most one compact Methods definition table for G,D,F,B code families; use plain descriptive names wherever possible.
+  morphology: Enumerate all 11 feature definitions and train-only standardization; show repeated real-real floor mean and seed SD, with interpretation not a validated physical threshold.
+  generator_contrasts: Discuss new G0/G1 observations, NoPDE and coefficient sensitivity; never transplant old numeric examples as new results.
+  physical_scope: Explicit constants are heuristic, no time/temperature/FEM-CFD truth, no identifiable physical parameter or process-valid dynamics claim.
+  memorization: Use T4 predeclared demotion result; report all alpha sensitivities and calibrated apparent FPR consistently; zero flags never establish no memorization.
+  detector: One consolidated main table for three budget axes and two families; full arm/seed/milestone/prediction/official-COCO details in supplement.
+  uncertainty: Primary exact sign-flip with its null assumptions, within-endpoint/split Holm family, mandatory nominal42 BH sensitivity; degenerate p undefined; no TOST or equivalence claims.
+  budget_bias: B4(b) has matched steps and real exposure but larger batches/compute; unlike the work-order example it does not have more optimizer updates.
+  ratio_boundary: If .125 selected, state smaller ratios are unexplored, not that no beneficial ratio exists.
+  adoption_checklist: One-page manufacturing-vision synthetic-data eligibility section/table covering validation calibration and controls; all budget axes; factorial loss isolation; donor lineage and pixel blending; residual not treated as quality.
+  strata_note: SUS at 200W/1100mm/s has one train specimen and one per held-out split; flag this degenerate small training stratum.
+  typography: Proxy RMS downward arrow; use test consistently; uniform apparent FPR precision; grayscale figures, standard table font and floats near first mention.
+targets: {main_pages_max: 12, main_tables_max: 10}
+qa:
+  data: All manuscript numbers generated from completed, hash-verified REV02 summaries; historical values labeled and isolated.
+  latex: Compile main and supplement from clean copied source/package, no unresolved references, missing figures or substantive box overflows.
+  render: Inspect every final PDF page for text/table/figure clipping, legibility, float placement and caption correspondence.
+  package: Clean Overleaf ZIPs include all referenced files and build instructions; no raw data, weights, environment secrets or unnecessary runtime logs.
+  audit: Requirement-by-requirement complete/partial/blocked evidence paths in REVISION_RESPONSE.md; no completion claim if experiments or manuscript remain pending.

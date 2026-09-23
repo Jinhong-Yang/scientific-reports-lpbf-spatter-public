@@ -1,0 +1,39 @@
+schema_version: 1
+policy_id: SR-LPBF-N2-INHERITED-BBOX-20260914
+status: FROZEN_PRE_TEST
+frozen_at: 2026-09-14T20:12:42+09:00
+decision_source: user_scope_decision_001
+
+training_target:
+  label_source: inherited_target
+  label_unit: inherited_bbox_region
+  physical_object_semantics: unverified
+  box_coordinates: inherited_native_xyxy_transformed_by_frozen_geometry_pipeline
+  correction_policy: no_human_correction_in_approved_scope
+
+human_review:
+  status: EXCLUDED_BY_USER_SCOPE
+  calibration_bundle_status: archived_unused
+  bundle_receipt: data/human_review/W04_calibration_64_v1/bundle_receipt.json
+  reviewer_count: not_applicable
+  agreement_metric: not_applicable
+  adjudication: not_applicable
+
+prohibited_claims:
+  - independently_human_validated_labels
+  - human_label_error_rate
+  - inter_rater_agreement
+  - corrected_label_validity
+  - individual_particle_ground_truth
+  - cluster_streak_or_spark_region_semantics_without_separate_evidence
+
+excluded_experiment:
+  block: label_policy_interaction
+  planned_detector_trajectories_removed: 20
+  reason: independent_rater_and_human_correction_process_excluded_by_user
+
+allowed_interpretation: >-
+  Detector results estimate performance against the inherited bounding-box
+  region target within the previously studied corpus. They do not validate the
+  physical object unit represented by each box.
+

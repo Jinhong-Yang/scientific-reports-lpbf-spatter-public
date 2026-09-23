@@ -1,0 +1,189 @@
+protocol_id: LPBF-WEAK-PHYSICS-REV02-20260902-v1
+task_id: T2
+status: preregistered_effective_upon_protocol_commit_and_hash_receipt
+scope: main_detector_multi_budget_validation_then_single_locked_test_campaign
+parent_work_order: WO-LPBF-WEAKPHYS-REV02
+prerequisites:
+  - T1 train and validation manifests and their input hashes are frozen.
+  - T6A complete 30-cell validation-only ratio grid and selection hashes are frozen.
+  - T3B donor-matched pixel-blend pool and pool-manifest consistency checks pass.
+  - Protocol is committed and its SHA-256 is recorded before implementation or execution.
+  - External checkpoint directory write authority and sufficient space are confirmed before execution.
+detector_seeds: [51001, 51002, 51003]
+paired_seed_rule: same_seed_across_arms_and_budget_axes_without_replacing_completed_seeds
+arms:
+  D0: real_only
+  D1: real_only_with_historical_conventional_augmentation
+  D2: real_plus_G1_F00
+  D4: real_plus_G2_F11
+  D5: real_plus_pixel_blends_using_identical_donor_a_donor_b_alpha_triples
+omitted_arm: D3
+conventional_augmentation:
+  only_arm: D1
+  horizontal_flip_probability: 0.5
+  brightness_factor_uniform: [0.8, 1.2]
+  contrast_factor_uniform: [0.8, 1.2]
+  transform_order: [horizontal_flip_with_box_reflection, brightness, contrast]
+  implementation_reference: src/metal_spatter_pinn/detector.py::DetectionDataset
+  application: independently_on_each_real_image_presentation
+ratio_assignment:
+  D0: 0.0
+  D1: 0.0
+  D2: frozen_T6A_D2_selection
+  D4: frozen_T6A_D4_selection
+  D5: sorted_unique_union_of_frozen_D2_and_D4_selected_ratios
+  D5_own_selection: prohibited
+  pairing_rule: compare_each_neural_arm_with_D5_at_that_neural_arms_selected_ratio
+data_contract:
+  expected_real_training_images: 3584
+  real_training_specimens: 112
+  validation_specimens: 32
+  image_size: [300, 300]
+  pool_size_per_generator_or_pixel_control: 7168
+  pool_generator_seed_count: 10
+  train_manifest: separate_train_only_manifest_bound_by_T1_hash
+  validation_manifest: separate_validation_only_manifest_bound_by_T1_hash
+  combined_manifest_containing_test_identifiers: prohibited_before_T7
+  source_provenance_field: source_kind
+  allowed_source_kinds: [real, synthetic]
+  exposure_detection_from_path_prefix: prohibited
+  flooring: upstream_box_flooring_identical_in_synthetic_JSON_and_pool_manifest
+  base_batch_size: 4
+  full_epoch_sampling: seeded_shuffle_without_replacement_then_reshuffle_next_epoch
+  synthetic_ratio_subsets: frozen_nested_T6A_subsets_with_identical_rows_across_corresponding_G1_G2_D5_pools
+budgets:
+  B1_B3:
+    name: equal_full_mixed_epochs
+    epoch_milestones: [1, 2, 5, 10]
+    real_exposure_formula: N_real_times_epoch
+    optimizer_step_formula: epoch_times_N_real_times_one_plus_r_divided_by_4
+    mixed_batch_size: 4
+    lr_decay: {clock: completed_epoch, interval: 3, gamma: 0.2}
+    structural_bias: augmented_arms_receive_more_optimizer_updates_and_total_images_at_equal_real_exposure
+  B2:
+    name: equal_optimizer_steps_fixed_mixed_batch
+    optimizer_step_milestones: [896, 1792, 4480, 8960]
+    mixed_batch_size: 4
+    expected_real_exposure_formula: 4_times_steps_divided_by_one_plus_r
+    exact_real_exposure: counted_from_explicit_source_kind_for_every_actual_batch
+    lr_decay: {clock: completed_optimizer_step, interval: 2688, gamma: 0.2}
+    structural_bias: augmented_arms_receive_fewer_real_image_exposures_at_equal_updates_and_total_batch_size
+  B4:
+    name: equal_real_exposure_and_optimizer_steps_with_expanded_batch
+    work_order_option: b
+    optimizer_step_milestones: [896, 1792, 4480, 8960]
+    real_images_per_optimizer_step: 4
+    synthetic_images_at_step_t: floor_4_r_t_minus_floor_4_r_t_minus_1
+    synthetic_count_formula: "k(t) = floor(4*r*t) - floor(4*r*(t-1)), t = 1,2,..."
+    cumulative_real_formula: "R(S) = 4*S"
+    cumulative_synthetic_formula: "Q(S) = floor(4*r*S)"
+    real_exposure_milestones: [3584, 7168, 17920, 35840]
+    maximum_expanded_batch_size: 12
+    sampling: independent_seeded_real_and_synthetic_streams_each_without_replacement_per_stream_epoch
+    optimizer_update: one_forward_backward_and_optimizer_step_on_the_single_expanded_batch
+    loss: sum_of_torchvision_mean_reduced_training_loss_components_for_the_single_expanded_batch
+    separate_real_and_synthetic_optimizer_steps: prohibited
+    gradient_accumulation_fallback: prohibited_without_pretest_protocol_amendment
+    lr_decay: {clock: completed_optimizer_step, interval: 2688, gamma: 0.2}
+    structural_bias: augmented_arms_receive_more_images_and_batch_compute_but_not_more_updates_at_equal_real_exposure
+    ambiguity_resolution: >-
+      The work order permits option (b) but its narrative and proposed bias table
+      also describe option (a), which increases optimizer steps. This protocol
+      explicitly chooses option (b). Four real images are presented at every
+      update, synthetic images expand that same batch, and both real exposures
+      and optimizer-step milestones match D0. The B4 table must therefore state
+      extra batch compute, not extra optimizer updates. The changing effective
+      batch size and internal detector loss normalization remain limitations.
+prospective_reuse:
+  D0: one_trajectory_per_seed_serves_B1_B3_B2_and_B4
+  D1: one_trajectory_per_seed_serves_B1_B3_B2_and_B4
+  justification: >-
+    With no synthetic images, all three schedules have batch size four, identical
+    exposure and update milestones, and decay at 2688, 5376 and 8064 updates.
+    Reused records carry one checkpoint identity and are not independent replications.
+  neural_and_pixel_arms: distinct_trajectory_for_each_budget_arm_ratio_seed
+model:
+  family: torchvision_fasterrcnn_resnet50_fpn_v2
+  initialization: FasterRCNN_ResNet50_FPN_V2_Weights.COCO_V1
+  input_min_size: 300
+  input_max_size: 300
+  trainable_backbone_layers: 3
+  foreground_class_count: 1
+  output_head: FastRCNNPredictor_with_two_classes_including_background
+  foreground_label: 1
+  score_threshold: 0.05
+  nms_threshold: 0.5
+  detections_per_image: 100
+  initialization_rule: seed_before_replacing_prediction_head
+optimization:
+  name: SGD
+  learning_rate: 0.003
+  momentum: 0.9
+  weight_decay: 0.0001
+  amp: true
+  gradient_clip_norm: 10.0
+  dataloader_workers: 0
+  cudnn_benchmark: false
+  cudnn_deterministic: true
+  no_validation_adaptive_early_stopping: true
+metrics:
+  primary: study_mAP_50_95
+  study_secondary: [study_AP_50, study_AP_75, study_AP_small_50, recall_50, false_positives_per_image]
+  official_companion: [COCO_AP, COCO_AP50, COCO_AP75, COCO_AP_small, COCO_AP_medium, COCO_AP_large, COCO_AR100]
+  official_evaluator: pycocotools_2.0.11_COCOeval_bbox
+  coco_iou_thresholds: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+  coco_max_dets: [1, 10, 100]
+  coco_area_ranges: official_default
+  coco_category_id: 1
+  custom_metric_must_not_be_named_official_COCO: true
+estimands:
+  unit: specimen_cluster_with_all_32_views_kept_together
+  paired_seed_average: mean_of_within_seed_specimen_cluster_AP_differences
+  primary_contrasts: [D2_minus_D0, D4_minus_D0, D2_minus_D5_at_D2_ratio, D4_minus_D5_at_D4_ratio]
+  contextual_contrast: D1_minus_D0
+  reporting_cells: every_frozen_budget_milestone_and_seed_without_endpoint_selection
+  pooled_COCO_AP: companion_population_metric_not_substituted_for_mean_specimen_AP
+  inferential_contract: REV02_T5.yaml/detector_statistics
+  null_result_rule: lack_of_significance_does_not_establish_equivalence_or_no_possible_benefit
+run_grid:
+  unique_selected_ratio_count_symbol: u_is_1_or_2
+  unique_trajectories_formula: "6 + 3*3*(2+u) = 24+9*u"
+  minimum_trajectories: 33
+  maximum_trajectories: 42
+  milestones_per_trajectory: 4
+  required_displayed_cells: all_five_arms_all_three_axes_all_four_milestones_all_three_seeds_with_D5_ratio_rows_explicit
+  no_silent_missing_cells: true
+checkpoint_policy:
+  root: D:/Codex Research/LPBF_REV02_20260902
+  retain: all_milestone_model_weights_and_resumable_state_until_and_after_T7
+  resumable_state: [model, optimizer, scaler, scheduler, python_rng, numpy_rng, torch_cpu_rng, torch_cuda_rng, sampler_rng, sampler_cursor, epoch, optimizer_step, real_seen, synthetic_seen]
+  checkpoint_hash: SHA-256
+  record_environment_lock_and_input_hashes: true
+  automatic_checkpoint_deletion: prohibited
+  disk_preflight: required_before_every_new_trajectory
+test_lock:
+  training_and_validation_test_reads: prohibited
+  unlock: only_after_all_T1_through_T6_runs_and_summaries_and_roster_hashes_are_frozen
+  evaluation: single_global_T7_campaign_for_every_retained_predeclared_checkpoint
+  test_based_selection_or_reranking: prohibited
+failure_policy:
+  completed_seed_replacement: prohibited
+  nonfinite_loss: fail_and_preserve_state_and_failure_record
+  OOM: fail_and_preserve_record_no_automatic_batch_change_or_retry
+  recovery: only_documented_pretest_amendment_and_identical_seed_without_overwriting_completed_results
+technical_checks:
+  - All five ratios produce integer pool sizes 448, 896, 1792, 3584, 7168.
+  - B4 cumulative counters equal 4*S and floor(4*r*S) at every milestone.
+  - B4 expanded batch never exceeds 12 images and has exactly four real images.
+  - B2 actual source counters sum to four times completed optimizer steps.
+  - B1/B3 complete epochs contain every real image exactly once per epoch.
+  - D0/D1 cross-axis reuse is marked with identical checkpoint hash and is not double-counted as replication.
+  - Per-image predictions retain foreground labels and specimen/view/image lineage.
+  - Official COCO handles empty predictions and uses xywh conversion with correct area and iscrowd.
+  - No trainer can access a combined or test manifest before global unlock.
+outputs:
+  root: results/REV02/T2
+  required: [config.yaml, raw/trajectory_manifest.csv, raw/exposure_grid.csv, raw/validation_metrics.csv, summary.json, RUN_LOG.md]
+  figures: [figures/budget_axis_bias.pdf, figures/budget_learning_curves.pdf]
+  tables: [raw/budget_axis_bias.csv, raw/B2_B4_matched_contrasts.csv]
+  conclusion_rule: derive_wording_from_completed_results_do_not_precommit_the_work_orders_suggested_negative_conclusion

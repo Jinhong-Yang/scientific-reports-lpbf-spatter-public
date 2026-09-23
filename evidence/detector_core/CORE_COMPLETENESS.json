@@ -1,0 +1,16 @@
+{
+  "completed_trajectories": 100,
+  "config_sha256": "71c74b5dff23ce74dbf1664449d9688d76e7b14a4e7490557dc43854fc2f39a2",
+  "failure_records": [],
+  "missing_run_ids": [],
+  "planned_trajectories": 100,
+  "primary_completed": 80,
+  "schema_version": 1,
+  "secondary_completed": 20,
+  "status": "COMPLETE",
+  "test_payload_accessed": false,
+  "training_gpu_hours": 24.525365207866212,
+  "trajectory_manifest": "evidence/detector_core/trajectory_manifest.parquet",
+  "trajectory_manifest_sha256": "0ac6b643505755d5f63d5045d89943d7296e5dac533686ce498c4461386811b0",
+  "validation_gpu_hours": 1.523169310083344
+}

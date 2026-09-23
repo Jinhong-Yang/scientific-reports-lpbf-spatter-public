@@ -1,0 +1,17 @@
+{
+  "completed_generator_fits": 27,
+  "completed_pools": 27,
+  "config_sha256": "11ae1f6fee13560adec9bb172f5b96c7b0b8125e7bd1f40440d0506b8479a782",
+  "cumulative_gpu_hours": 0.22792673238888003,
+  "failure_records": [],
+  "full_data_generator_or_pool_reused": false,
+  "human_review": "EXCLUDED_BY_USER_SCOPE",
+  "missing_run_ids": [],
+  "planned_generator_fits": 27,
+  "pool_manifest": "evidence/low_data/low_data_pool_manifest.parquet",
+  "pool_manifest_sha256": "3a8f9645d69bd61a190f151bf506db6331505cedabcd03c61deb2e06c5d70752",
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "test_payload_accessed": false
+}

@@ -1,0 +1,42 @@
+{
+  "checks": [
+    {
+      "component": "fasterrcnn",
+      "elapsed_seconds": 1.5419335999995383,
+      "gradient_norm_before_clip": 63.41366195678711,
+      "loss": 1.055572748184204,
+      "parameters_trainable": 43030809,
+      "peak_allocated_MiB": 2887.32861328125,
+      "peak_reserved_MiB": 4002.0,
+      "prediction_label_check": "PASS",
+      "toy_batch": 12
+    },
+    {
+      "component": "retinanet",
+      "elapsed_seconds": 0.9767912999996042,
+      "gradient_norm_before_clip": 8.901567459106445,
+      "loss": 1.6901917457580566,
+      "parameters_trainable": 36106541,
+      "peak_allocated_MiB": 1360.7255859375,
+      "peak_reserved_MiB": 1460.0,
+      "prediction_label_check": "PASS",
+      "toy_batch": 12
+    },
+    {
+      "component": "generator_second_derivative_losses",
+      "losses": {
+        "blob": 0.3705174922943115,
+        "boundary": 0.3856370449066162,
+        "laplacian": 398.701416015625,
+        "moment": 0.0909501388669014,
+        "proxy": 0.2364230453968048
+      },
+      "status": "PASS",
+      "toy_batch": 2
+    }
+  ],
+  "finished_utc": "2026-09-02T13:28:05.491585+00:00",
+  "planned_seed_or_checkpoint_reused": false,
+  "status": "PASS",
+  "study_data_used": false
+}

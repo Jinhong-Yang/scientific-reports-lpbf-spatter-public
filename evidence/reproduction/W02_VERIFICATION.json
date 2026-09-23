@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-09-14T18:00:00+09:00",
+  "status": "PASS_WITH_LIMITATION",
+  "implementation_commit": "7b20c45788b2020142cd2de7ed47b866253f851d",
+  "exact_commit_archive_sha256": "4926573afe7460e9afea68e4283b40eb814090c66fd3025b9aa7621c5ef93fa6",
+  "locked_rev02_script_hashes": {
+    "checked": 8,
+    "matched": 8,
+    "mismatched": 0
+  },
+  "locked_external_source_hashes": {
+    "checked": 11,
+    "matched_in_current_historical_snapshot": 11,
+    "mismatched": 0
+  },
+  "historical_nested_checkout_note": "Four of eight Rev02 scripts in the discovered working checkout differ from the lock because the historical tree contained later uncommitted changes. The exact Git-archive versions match all eight hashes and are used for R1.",
+  "tests": {
+    "command_scope": "Recovered commit tests using recovered historical base package on the locked Python environment",
+    "passed": 116,
+    "subtests_passed": 37,
+    "failed": 0,
+    "warnings": 1,
+    "warning_summary": "Torchvision trainable_backbone_layers fallback in a non-pretrained unit test; no test failure."
+  },
+  "cuda": {
+    "available": true,
+    "device": "NVIDIA GeForce RTX 5080",
+    "full_training_run": false
+  },
+  "limitations": [
+    "No historical numerical result has yet been recomputed from scratch.",
+    "The latest Applied Sciences manuscript package is missing.",
+    "Full training remains prohibited before the W08 protocol and compute gates."
+  ]
+}

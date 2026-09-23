@@ -1,0 +1,57 @@
+{
+  "artifacts": {
+    "docs/W10_OPERATOR_ANALYSIS.md": {
+      "bytes": 902,
+      "sha256": "74c2375b4eef24842193911a763c064b6938fa3c825fed7b0c4dee2a588cb36a"
+    },
+    "evidence/prior_sweep/mechanism_diagnostics.parquet": {
+      "bytes": 1295078,
+      "sha256": "ae39a4daa01fb0f5e9af9f88f7fb03801eade1b989e0907d25fb39c7ff6eec06"
+    },
+    "evidence/prior_sweep/regularization_path.csv": {
+      "bytes": 3452,
+      "sha256": "dd9909a57cb8d78ff4f502788d926bffd894ef097da928a988f07cf8930d5e55"
+    },
+    "evidence/prior_sweep/regularization_path_aggregate.csv": {
+      "bytes": 668,
+      "sha256": "33c3e16e22d93aca3def48b8288022ae3fdcb2ad1b5eb93cf188228e47fb7135"
+    },
+    "evidence/prior_sweep/smoothing_control_metrics.csv": {
+      "bytes": 3292,
+      "sha256": "d6f1393cd80801c9dba5baac249285769a621c752298c5c398983c56599c1842"
+    },
+    "evidence/prior_sweep/smoothing_match.csv": {
+      "bytes": 376,
+      "sha256": "55b0b40bd4b49aac9e19ab69e8072a007916f4690d945dfd28bbfb4b4419c1fb"
+    }
+  },
+  "interpretation": "Mechanism and smoothing results are controlled validation diagnostics; no physical-field validation or held-out detector claim is made.",
+  "matched_control_status": [
+    {
+      "absolute_relative_gap": 0.14104223875318098,
+      "control_family": "gaussian_sigma_px",
+      "match_status": "UNMATCHED_CLOSEST_ONLY",
+      "match_tolerance": 0.05,
+      "mean_validation_mse": 0.0005997747073053671,
+      "strength": 0.5,
+      "target_mean_validation_mse": 0.000525637603004725,
+      "target_np_lambda": 0.0035
+    },
+    {
+      "absolute_relative_gap": 0.14104223875318098,
+      "control_family": "heat_tau_px2",
+      "match_status": "UNMATCHED_CLOSEST_ONLY",
+      "match_tolerance": 0.05,
+      "mean_validation_mse": 0.0005997747073053671,
+      "strength": 0.125,
+      "target_mean_validation_mse": 0.000525637603004725,
+      "target_np_lambda": 0.0035
+    }
+  ],
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "schema_version": 1,
+  "status": "PASS",
+  "sweep_runs": 18,
+  "test_payload_accessed": false,
+  "validation_rows": 1024
+}

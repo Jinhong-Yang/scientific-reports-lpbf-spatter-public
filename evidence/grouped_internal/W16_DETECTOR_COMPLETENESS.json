@@ -1,0 +1,16 @@
+{
+  "completed_trajectories": 36,
+  "config_sha256": "ee8a7a3baf31e52723937e84a53a0316bd3b1c41ea9283a42b152f63352216c2",
+  "evaluation_gpu_hours": 1.0158244868888384,
+  "external_validity_claim": "PROHIBITED",
+  "failure_records": [],
+  "held_out_test_payload_accessed": false,
+  "missing_run_ids": [],
+  "planned_trajectories": 36,
+  "schema_version": 1,
+  "scope": "internal_protocol_frozen_replication_only",
+  "status": "COMPLETE",
+  "training_gpu_hours": 10.761434978755561,
+  "trajectory_manifest": "evidence/grouped_internal/grouped_detector_manifest.parquet",
+  "trajectory_manifest_sha256": "4e5c8a289bb8d5c2d82cbe1b5994c4779222ab6aec8d92ebd5160807dbea4bd1"
+}

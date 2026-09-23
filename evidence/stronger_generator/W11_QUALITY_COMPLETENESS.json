@@ -1,0 +1,30 @@
+{
+  "cells_completed": 50,
+  "cells_planned": 50,
+  "common_quality_roster_images_per_cell": 1024,
+  "distribution_population_pairing": "same_validation_target_roster",
+  "human_review": "EXCLUDED_BY_USER_SCOPE",
+  "interpretive_limits": [
+    "Inception metrics use ImageNet Inception-v3 Mixed_6e features and are descriptive for this grayscale domain.",
+    "The automated similarity screen does not prove memorization or its absence.",
+    "Operational geometry is relative to inherited boxes whose physical object semantics were not independently reviewed."
+  ],
+  "label_validity_status": "SCOPE_LIMITED_INHERITED_OPERATIONAL_TARGET_ONLY",
+  "memorization_calibration_flag_rate": 0.013671875,
+  "outputs": {
+    "evidence/stronger_generator/NEW_POOL_LABEL_VALIDITY.json": "62444b937565a4fda70c50f9951b04790d7e2c1a6672e7e2d33057d7e51b8622",
+    "evidence/stronger_generator/generation_metrics.parquet": "9f8641a98b90aa4b4f65dff81dd5277bc4e788507cda6bf07914187fe2ed3769",
+    "evidence/stronger_generator/generation_per_image.parquet": "56e114354e613c05c407196842a3916fd35950296858503c644bc7c3e623e807",
+    "evidence/stronger_generator/memorization_threshold_lock.json": "4a57fedfe9ec0a4ef212b68c5164719171ac8fab7ffa9a731aa0e413f9858b58",
+    "evidence/stronger_generator/pffd10_scaler.json": "449e3f653880f13f9cf2177f4615612111a71375d75ffed9304e8fce1ea06155",
+    "evidence/stronger_generator/quality_arm_summary.csv": "a6f1f87d7dab10ab56a613def36d2ba78300d14075f337a1d270c8fa6cbab3f4",
+    "evidence/stronger_generator/quality_grid.csv": "7f1fc5eaef4ef6d779a4f6100fdc8d08daeea54ec46d02df776063c13152a030",
+    "evidence/stronger_generator/within_target_diversity.csv": "516fd9e62e819cb449c54ffd4bf6e885256f9a1af73aaa10fae83f434e7063e6"
+  },
+  "protocol_sha256": "acb2303267117bb374c4c10fe59aea5701a52cb56d98ca2bd5b73f9e5296e587",
+  "quality_config_sha256": "5e11af363f438dfe5edcc78799e72308b6db2d97be66e40da4f04f9dd47ad36a",
+  "real_cache_identity_sha256": "58d113d46078e5ad53552a97eaf631465e4076e1270ce2c5d4f3175acf6f8bf2",
+  "schema_version": 1,
+  "status": "PASS_WITH_SCOPE_LIMITATION",
+  "test_payload_accessed": false
+}

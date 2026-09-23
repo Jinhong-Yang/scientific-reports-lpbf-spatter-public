@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_W15_RESOLUTION_OUTCOMES",
+  "experiment_id": "W15_RESOLUTION_EXPOSURE_BUDGET_SENSITIVITY",
+  "held_out_test_access": "PROHIBITED",
+  "source_native_resolution": [300, 300],
+  "generator_resolution": [64, 64],
+  "detector_resolution": [300, 300],
+  "paths": {
+    "native300": "native_real_300x300_to_detector_300x300",
+    "common64": "native_real_300x300_bilinear_downsample_64x64_then_bilinear_upsample_300x300",
+    "synthetic64to300": "generated_64x64_bilinear_upsample_300x300"
+  },
+  "analysis_arms": ["N1", "NR", "NB", "NP"],
+  "pipeline_seeds": [61001, 61002, 61003, 61004, 61005, 61006, 61007, 61008, 61009, 61010],
+  "detector_family": "fasterrcnn",
+  "checkpoint": 8960,
+  "new_training_trajectories": 0,
+  "resolution_evaluations": 40,
+  "primary_status": "validation_only_resolution_path_sensitivity",
+  "higher_resolution_branch": {
+    "resolution": 1024,
+    "status": "NOT_RUN_NO_NATIVE_INFORMATION_SUPPORT_AND_NOT_IN_FROZEN_TRAJECTORY_BUDGET"
+  },
+  "claims": {
+    "same_detector_tensor_shape": "SUPPORTED_FOR_ALL_ARMS_AT_300x300",
+    "same_native_information_resolution": "PROHIBITED_FOR_REAL_VERSUS_SYNTHETIC",
+    "same_total_optimizer_updates": "SUPPORTED_WITHIN_FROZEN_DETECTOR_BLOCKS",
+    "same_real_image_exposure": "REQUIRES_ARM_SPECIFIC_EXPOSURE_LEDGER"
+  }
+}

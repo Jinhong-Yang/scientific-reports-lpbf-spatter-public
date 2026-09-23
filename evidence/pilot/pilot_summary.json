@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-14T09:47:36.741372+00:00",
+  "status": "PASS_WITH_LIMITATION",
+  "scope": "bounded technical dev pilot; not a scientific trajectory or W08 model selection",
+  "test_split_used": false,
+  "inherited_label_semantics_resolved": false,
+  "model": "torchvision_fasterrcnn_resnet50_fpn_v2",
+  "initialization": "FasterRCNN_ResNet50_FPN_V2_Weights.COCO_V1 from managed copied artifact",
+  "weights_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "resolution": [
+    300,
+    300
+  ],
+  "batch_size": 4,
+  "amp_mode": "bf16",
+  "autocast_enabled": true,
+  "grad_scaler_enabled": false,
+  "optimizer": {
+    "name": "SGD",
+    "learning_rate": 0.003,
+    "momentum": 0.9,
+    "weight_decay": 0.0001
+  },
+  "updates": 200,
+  "training_rows": 64,
+  "validation_rows": 64,
+  "training_specimens": 53,
+  "validation_specimens": 32,
+  "training_sample_ids_sha256": "6805a484481bfaac709c476112e097a1b956a573ad21c04a9c0d0b81b6a73cb3",
+  "validation_sample_ids_sha256": "43303218eb25595b0f13fcb99991139a50609385e00a8a07d1929128d1e8d601",
+  "training_view_counts": {
+    "Off_Axis_Images": 32,
+    "On_Axis_Images": 32
+  },
+  "validation_view_counts": {
+    "Off_Axis_Images": 32,
+    "On_Axis_Images": 32
+  },
+  "timing": {
+    "training_loop_seconds_including_milestone_validation": 34.81027059999178,
+    "step_mean_seconds_all": 0.13879471100022783,
+    "step_median_seconds_all": 0.14282330001879018,
+    "step_p95_seconds_all": 0.15421550999453754,
+    "step_mean_seconds_after_5_warmup": 0.13696613435928998
+  },
+  "memory": {
+    "peak_allocated_mib": 1392.45703125,
+    "peak_reserved_mib": 2268.0
+  },
+  "loss": {
+    "first_20_mean": 0.42282387614250183,
+    "last_20_mean": 0.05030169272795319,
+    "all_finite": true
+  },
+  "validation": {
+    "milestones": [
+      0,
+      50,
+      100,
+      150,
+      200
+    ],
+    "pooled_coco_ap": [
+      0.014648088596705633,
+      0.3015613319846799,
+      0.39246263741077797,
+      0.3804346936917533,
+      0.3865714666481449
+    ],
+    "all_defined_and_finite": true
+  },
+  "gpu_before": {
+    "name": "NVIDIA GeForce RTX 5080",
+    "driver_version": "591.86",
+    "memory.total": "16303",
+    "memory.free": "12269",
+    "utilization.gpu": "0"
+  },
+  "gpu_after": {
+    "name": "NVIDIA GeForce RTX 5080",
+    "driver_version": "591.86",
+    "memory.total": "16303",
+    "memory.free": "11039",
+    "utilization.gpu": "82"
+  },
+  "acceptance": {
+    "exactly_200_updates": true,
+    "finite_losses_and_gradients": true,
+    "train_and_validation_only": true,
+    "managed_copied_weight_used": true,
+    "timing_and_memory_measured": true
+  },
+  "limitations": [
+    "W04 box semantics are unresolved; validation AP is a technical stability signal only.",
+    "One short real-only pilot cannot select augmentation ratio, generator lambda, stopping rule, or architecture.",
+    "Wall time may include background GPU/host contention and is not a vendor benchmark.",
+    "No checkpoint is retained for scientific reuse and no held-out test image was accessed."
+  ]
+}

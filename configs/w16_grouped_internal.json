@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_W16_OUTCOMES",
+  "experiment_id": "W16_DEVELOPMENT_GROUPED_OOF",
+  "scope": "internal_protocol_frozen_replication_only",
+  "external_validity_claim": "PROHIBITED",
+  "source_population": "W09_train_plus_validation_144_specimens_only",
+  "held_out_test_access": "PROHIBITED_DURING_W16_FOLD_CONSTRUCTION_TRAINING_AND_EVALUATION",
+  "partition_seeds": [64001, 64002, 64003],
+  "folds_per_partition": 3,
+  "grouping_unit": "specimen",
+  "assignment": "within_stratum_seeded_hash_order_round_robin",
+  "arms": ["N1", "NR", "NB", "NP"],
+  "detector_family": "fasterrcnn",
+  "detector_trajectories": 36,
+  "detector_updates": 8960,
+  "generator_refits": {
+    "NP": 9,
+    "per": "partition_seed_x_outer_fold",
+    "training_rows": "outer_training_fold_only",
+    "checkpoint": "fixed_final_epoch_10_no_oof_selection",
+    "full_data_generator_reuse": false
+  },
+  "pool_policy": {
+    "ratio": 0.25,
+    "selection": "every_fourth_outer_training_row_starting_at_zero",
+    "NB": "donor_matched_pixel_blend_within_outer_training_fold",
+    "NR": "additional_augmented_real_within_outer_training_fold",
+    "NP": "outer_training_fold_refit_field_generation"
+  },
+  "analysis": {
+    "predictions": "outer_fold_only",
+    "combine": "concatenate_three_nonoverlapping_outer_fold_predictions_within_partition_seed",
+    "unit": "specimen_with_views_together",
+    "primary_status": "secondary_internal_robustness_analysis"
+  },
+  "human_label_review": "EXCLUDED_BY_USER_SCOPE"
+}

@@ -1,0 +1,30 @@
+{
+  "audit_name": "W12_FULL_INTEGRITY_AUDIT",
+  "audited_at_utc": "2026-09-15T21:56:42.044945+00:00",
+  "conditions": {
+    "core_receipt_complete": true,
+    "core_receipt_exact_count": true,
+    "core_receipt_no_missing": true,
+    "core_receipt_no_test_access": true,
+    "every_trajectory_completed": true,
+    "exactly_100_receipts": true
+  },
+  "core_receipt": {
+    "completed_trajectories": 100,
+    "missing_run_ids": [],
+    "planned_trajectories": 100,
+    "status": "COMPLETE",
+    "test_payload_accessed": false
+  },
+  "problems": [],
+  "schema_version": 1,
+  "scope": "all W12 completion receipts and every receipt-listed artifact hash",
+  "status": "PASS",
+  "summary": {
+    "artifact_hashes_checked": 1902,
+    "expected_optimizer_updates": 8960,
+    "expected_trajectories": 100,
+    "trajectories_with_problems": 0,
+    "trajectory_receipts": 100
+  }
+}

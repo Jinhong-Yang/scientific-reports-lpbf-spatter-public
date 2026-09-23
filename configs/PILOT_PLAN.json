@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "status": "EXECUTED_WITH_DOCUMENTED_PRECISION_RECOVERY",
+  "purpose": "Measure 200-update timing, memory, numerical stability, and validation-path behavior before W08; not scientific model selection.",
+  "data_roles": {
+    "training": "64 deterministic rows, one per training stratum-view bucket",
+    "validation": "64 deterministic rows, one per validation stratum-view bucket",
+    "test": "PROHIBITED"
+  },
+  "model": "torchvision_fasterrcnn_resnet50_fpn_v2",
+  "initialization": "COCO_V1 from managed copied historical artifact",
+  "resolution": [300, 300],
+  "micro_batch": 4,
+  "effective_batch": 4,
+  "gradient_accumulation": 1,
+  "updates": 200,
+  "validation_milestones": [0, 50, 100, 150, 200],
+  "optimizer": {
+    "name": "SGD",
+    "learning_rate": 0.003,
+    "momentum": 0.9,
+    "weight_decay": 0.0001,
+    "precision_initial": "fp16 AMP",
+    "precision_failure_rule": "Stop on nonfinite loss or gradient before any optimizer update.",
+    "precision_diagnostic_amendment": "After the deterministic fp16 update-1 failure, run the same bounded plan with bf16 autocast; this is a numerical recovery check, not outcome-based model selection.",
+    "gradient_clip_norm": 10.0
+  },
+  "outputs": [
+    "evidence/pilot/pilot_results.csv",
+    "evidence/pilot/pilot_summary.json",
+    "evidence/pilot/failure_amp_fp16_update1.json"
+  ],
+  "checkpoint_retained": false,
+  "full_training_authorized": false,
+  "limitations": [
+    "Inherited label semantics remain unresolved at W04.",
+    "The pilot cannot choose an endpoint, architecture, ratio, lambda, or stopping rule.",
+    "Only training and validation data may be read."
+  ]
+}
