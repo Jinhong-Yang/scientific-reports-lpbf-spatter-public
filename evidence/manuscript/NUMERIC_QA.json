@@ -6,6 +6,10 @@
     "four_primary_contrasts": true,
     "generated_hashes_match": true,
     "generated_hashes_present": true,
+    "primary_means_and_saved_sample_quantiles_recomputed": true,
+    "secondary_all_twenty_cells": true,
+    "secondary_recovery_counts_reconcile": true,
+    "secondary_recovery_roster_matches": true,
     "source_hashes_match": true,
     "source_hashes_present": true,
     "support_document_hashes_match": true,
@@ -14,7 +18,9 @@
     "thirty_two_test_specimens": true,
     "twenty_thousand_draws": true
   },
+  "maximum_recompute_error": 1.3357370765021415e-16,
   "mismatches": [],
+  "recompute_scope": "Means from per-run AP and quantiles from saved bootstrap draws; raw-prediction bootstrap not rerun",
   "schema_version": 1,
   "status": "PASS"
 }

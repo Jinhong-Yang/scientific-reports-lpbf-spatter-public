@@ -1,5 +1,6 @@
 {
   "build": "PASS",
+  "content": "PASS",
   "independent_evaluator": "EXCLUDED_BY_USER_SCOPE",
   "manuscript": "PASS",
   "numeric": "PASS",

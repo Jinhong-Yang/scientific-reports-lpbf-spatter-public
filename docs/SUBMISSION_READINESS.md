@@ -8,4 +8,5 @@ The scientific package is internally complete only when this file reports `READY
 - Numerical audit: `PASS`
 - Build and visual audit: `PASS`
 - Internal review outcome: `MINOR_REVISION_OR_BETTER_INTERNAL_ASSESSMENT`
+- Substantive review: `PASS`
 - Independent evaluator process: `EXCLUDED_BY_USER_SCOPE`

@@ -1,0 +1,48 @@
+\subsection{Condition vector and fixed coefficient map}
+Indices below are zero-based, matching the archived implementation. The 13-dimensional condition is
+\begin{align*}
+c_0&=\operatorname{clip}((P-80)/120,0,1), &c_1&=\operatorname{clip}((v-500)/600,0,1),\\
+c_2&=\operatorname{clip}((E-0.0727272727)/(0.4-0.0727272727),0,1),
+\end{align*}
+where $P$ is recorded laser power (W), $v$ is scan speed (mm/s), and $E$ is recorded line energy (J/mm), with $P/v$ as its missing-field fallback. $c_3,c_4$ indicate material names containing INCONEL and SUS; $c_5,c_6$ indicate on-axis and off-axis views. Box width and height are floored at four pixels before conditioning. $c_7,c_8$ are the box centre mapped to $[-1,1]^2$ and clipped there; $c_9=\operatorname{clip}[\log(1+wh)/\log(1+WH),0,1]$; $c_{10}=\tanh[\log(w/h)]$; and $c_{11},c_{12}$ are sine and cosine of the recorded lamination angle. Here $W,H$ are image dimensions and $w,h$ are the floored box dimensions. These are fixed transformations, not estimates fitted on the held-out cohort. Box geometry is supplied to the generator; that dependence limits what synthetic-label utility can establish.
+
+For the optical residual in Methods, the code defines
+\begin{align*}
+D&=0.018+0.010c_4+0.004c_5, &k&=0.65+0.35c_1,\\
+v_x&=(0.05+0.15c_1)c_{12}, &v_y&=(0.05+0.15c_1)c_{11},\\
+S&=0.08+0.42c_2+0.05c_0, &m&=(c_7,c_8).
+\end{align*}
+Let $a=[\exp(c_9\log90001)-1]/90000$ and
+$b=\operatorname{clip}(\sqrt{\max(a,16/90000)},0.018,0.55)$.
+Then $\sigma_x=\operatorname{clip}(b\exp(0.25c_{10}),0.018,0.60)$ and
+$\sigma_y=\operatorname{clip}(b\exp(-0.25c_{10}),0.018,0.60)$, and
+$G=\exp\{-\tfrac12[(x-m_x)^2/\sigma_x^2+(y-m_y)^2/\sigma_y^2]\}$.
+The constants and 300-pixel-area normalization are empirical dimensionless mappings. They are not measured diffusivity, velocity, temperature, or emissivity.
+
+\subsection{Losses, reductions, and optimization}
+For normalized target intensity $t$, $q=1+10\sqrt{\max(t,0)}$ and
+\[
+L_{\rm rec}=\operatorname{mean}[q(u-t)^2]+0.15\operatorname{mean}[\sqrt q\,|u-t|].
+\]
+The means run over batch and sampled pixels, without dividing by the sum of weights. The standard-normal latent penalty is
+$L_{\rm KL}=-\tfrac12\operatorname{mean}(1+\log\sigma_z^2-\mu_z^2-\sigma_z^2)$,
+including the latent dimension in the mean. Residual attention is
+$A=0.2+0.8|r|/\max(\max_j|r_j|,10^{-6})$, with the numerator and denominator detached from differentiation and the maximum taken within each image. $L_P=\operatorname{mean}(Ar^2)$. Boundary coordinates are uniform along randomly selected edges, and $L_B=\operatorname{mean}(u_{\partial}^2)$ penalizes intensity, not a no-flux derivative.
+
+On a $16\times16$ moment grid, weights $u^2+10^{-6}$ define a normalized centre $\hat m$ and coordinatewise variance. With $\hat\sigma=\sqrt{\max(\widehat{\mathrm{var}},10^{-6})}$,
+$L_M=\operatorname{mean}[(\hat m-m)^2]+0.25\operatorname{mean}[(\hat\sigma-\sigma)^2]$.
+Per image/update, training draws 128 pixel indices with replacement, 32 collocation coordinates uniform on $[-1,1]^2$, and 32 boundary coordinates. Paired seeds share these streams across arms. AdamW uses learning rate $7\times10^{-4}$, weight decay $10^{-6}$, cosine decay to $10^{-5}$, float32, and gradient clipping at norm 1. Ten epochs of 112 batches produce 1,120 full-data updates; the earliest minimum unweighted full-validation posterior-mean MSE selects a checkpoint. The training objective and selection metric therefore differ intentionally.
+
+F00 has $(\lambda_P,\lambda_B,\lambda_M)=(0,0,0)$; F01 has $(0,0.01,0.02)$; F10 has $(0.0035,0,0)$; F11 has $(0.0035,0.01,0.02)$. Detector NF, NP, and pre-smoothing NS use F00, F11, and F01, respectively. No detector arm isolated F10.
+
+\subsection{Common finite-difference and smoothing diagnostics}
+Common residual scoring uses float64 image grids with coordinate spacing $2/(W-1)$ and $2/(H-1)$. NumPy gradients use centred interior differences and first-order one-sided edge differences; applying gradients again gives $u_{xx}+u_{yy}$. The same coefficient map is applied to all image arrays, and root-mean-square residual is averaged over pixels. This image-grid score is distinct from the automatic-differentiation collocation loss. Gradient RMS, Laplacian variance, and Fourier power summaries are separate diagnostics. Gaussian smoothing uses reflect boundaries; the heat-equivalent time is $\tau=\sigma^2/2$. Neither operator repairs the 14.1\% reconstruction-match failure.
+
+\subsection{Donor and synthetic-pool construction}
+Donors are training rows with the target material and view. Mean squared condition distance uses dimensions $0,1,2,7,8,9,10$; row index resolves ties. Two donors are drawn with replacement from the nearest 64 candidates (or all if fewer exist); self-donation is permitted for training targets. NB is $\alpha I_a+(1-\alpha)I_b$ with $\alpha\sim U[0.2,0.8]$. Coordinate fields instead decode $z=\alpha\mu_a+(1-\alpha)\mu_b+0.08\epsilon$, $\epsilon\sim N(0,I_{16})$, under the target condition. Intensities are clipped to $[0,1]$, scaled to 255, rounded, and stored as uint8. NS additionally applies Gaussian $\sigma=0.5$ to the F01 output. ND uses its own diffusion noise, not the donor latent interpolation. Each seed has 3,584 training-target synthetic rows per arm; every fourth row is selected to provide 896 mixed-roster rows. Quality pools use all 1,024 validation target conditions, with donors restricted to training. Inheriting target boxes gives deterministic row alignment, not verified object appearance.
+
+\subsection{Detector optimization and exposure}
+Both torchvision v2 detectors use three trainable backbone layers, pretrained COCO V1 initialization, SGD at 0.003 with momentum 0.9 and weight decay $10^{-4}$, and a learning-rate multiplier 0.2 every 2,688 updates. The gradient norm cap is 10. Score threshold 0.05, NMS threshold 0.5, and 100 maximum detections per image are fixed. The single foreground class is mapped to canonical category 1 for scoring. Real presentations in all arms except N0 receive horizontal flips with probability 0.5, then independent uniform brightness and contrast factors in $[0.8,1.2]$; synthetic presentations are not augmented. The 0.25 fallback ratio is relative to the base real roster, not the final mixed batch. Randomly shuffled complete mixed-roster passes contain 80\% base-real and 20\% additional presentations; equal update counts do not imply equal real-image exposure or equal total generator-plus-detector compute.
+
+\subsection{Quality-score definitions}
+PFFD10 uses training-only coordinatewise population-SD standardization of mean/max intensity, intensity centroid and variance in both directions, bright-area fraction, bright-box width/height fractions, and component count. Gaussian Fr\'echet distance uses covariance regularization $10^{-8}$. ImageNet Inception-v3 Mixed\_6e activations are spatially averaged to 768 dimensions after grayscale-to-RGB repetition, bilinear resizing to 299 pixels and ImageNet normalization. This is not the conventional 2,048-dimensional pool3 FID. KID uses the full-population unbiased MMD-squared U-statistic with kernel $(x^Ty/768+1)^3$; it may be negative. Diversity is mean $1-\mathrm{SSIM}$ over all 45 seed pairs per target. Automated similarity screening compares generated images to the training bank using exact original/flip matches, ResNet-18 feature nearest-neighbour distance at the validation-calibrated first percentile, or nearest-feature-reference SSIM at the validation-calibrated 99th percentile. A flag is not proof of memorization, and absence of a flag is not proof of novelty.

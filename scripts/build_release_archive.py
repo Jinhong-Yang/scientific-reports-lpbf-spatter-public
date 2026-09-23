@@ -20,6 +20,10 @@ INCLUDE_FILES = {
     "reproduce.ps1", "reproduce.sh", "requirements-reporting.txt",
 }
 EXCLUDE_PREFIXES = (
+    "docs/PROJECT_COMPLETION_AUDIT.md", "evidence/completion/",
+    "docs/FINAL_HANDOFF", "evidence/manuscript/W21_HANDOFF.json",
+    "evidence/release/PUBLICATION_RECEIPT.json",
+    "docs/EXPERIMENT_ANALYSIS_AND_REVISION_PLAN_KO_20260923.md",
     "docs/INSTRUCTION_PROVENANCE.md",
     "docs/ANNOTATION_PROTOCOL.md", "docs/W04_", "configs/protocol_draft.yaml",
     "docs/GO_NO_GO.md", "docs/MISSING_INPUTS.md",
@@ -57,7 +61,13 @@ def tracked_files() -> list[str]:
 
 
 def source_study_commit() -> str:
-    return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    # An extracted public archive has no .git; do not inherit an enclosing repo.
+    if (ROOT / ".git").exists():
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    manifest = ROOT / "release/PUBLIC_RELEASE_MANIFEST.json"
+    if manifest.is_file():
+        return json.loads(manifest.read_text(encoding="utf-8"))["source_study_commit"]
+    raise RuntimeError("Neither source Git metadata nor release provenance exists")
 
 
 def source_state_issues(status: str, head: str, upstream: str) -> list[str]:

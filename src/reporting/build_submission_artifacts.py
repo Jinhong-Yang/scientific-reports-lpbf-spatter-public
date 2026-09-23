@@ -24,6 +24,26 @@ import pandas as pd  # noqa: E402
 GENERATED = ROOT / "manuscript" / "generated"
 FIGURES = ROOT / "manuscript" / "figures"
 SOURCE_DATA = ROOT / "evidence" / "figure_source_data"
+RELEASE_VERSION = "v1.0.1"
+# Every aggregate input is required in the source-data-free release too.
+INPUT_FILES = (
+    "evidence/final_statistics/primary_comparisons.parquet",
+    "evidence/final_statistics/low_data_comparisons.parquet",
+    "evidence/final_statistics/grouped_oof_comparisons.parquet",
+    "evidence/test_campaign/test_metrics.parquet",
+    "evidence/resolution/resolution_sensitivity.parquet",
+    "evidence/generator_factorial/factorial_effects_summary.csv",
+    "evidence/prior_sweep/regularization_path_aggregate.csv",
+    "evidence/prior_sweep/smoothing_match.csv",
+    "evidence/stronger_generator/quality_arm_summary.csv",
+    "evidence/reporting/W17_SECONDARY_RECOVERY.json",
+)
+
+
+def require_inputs() -> None:
+    missing = [name for name in INPUT_FILES if not (ROOT / name).is_file()]
+    if missing:
+        raise RuntimeError("Missing manuscript aggregate inputs: " + ", ".join(missing))
 
 
 def sha256_file(path: Path) -> str:
@@ -166,17 +186,21 @@ def build_figures(primary: pd.DataFrame, test: pd.DataFrame, low: pd.DataFrame,
     selected_quality = quality[["arm", "PFFD10_train_scaled_mean", "PFFD10_train_scaled_sd",
                                 "FID_InceptionV3_Mixed6e_768_mean", "FID_InceptionV3_Mixed6e_768_sd"]].copy()
     selected_quality = selected_quality.sort_values("arm")
-    fig, axes = plt.subplots(1, 2, figsize=(7.1, 2.65))
-    x = np.arange(len(selected_quality))
-    for axis, mean_col, sd_col, title, ylabel in (
-        (axes[0], "PFFD10_train_scaled_mean", "PFFD10_train_scaled_sd", "a  Domain morphology distance", "PFFD10"),
-        (axes[1], "FID_InceptionV3_Mixed6e_768_mean", "FID_InceptionV3_Mixed6e_768_sd", "b  ImageNet-feature distance", "FID (Mixed_6e)"),
+    fig, axes = plt.subplots(2, 2, figsize=(7.1, 4.6))
+    for row, mean_col, sd_col, ylabel in (
+        (0, "PFFD10_train_scaled_mean", "PFFD10_train_scaled_sd", "PFFD10"),
+        (1, "FID_InceptionV3_Mixed6e_768_mean", "FID_InceptionV3_Mixed6e_768_sd", "FID (Mixed_6e)"),
     ):
-        axis.bar(x, selected_quality[mean_col], yerr=selected_quality[sd_col], capsize=3,
-                 color=[colors.get(arm, "#777777") for arm in selected_quality["arm"]])
-        axis.set_xticks(x, selected_quality["arm"])
-        axis.set_ylabel(ylabel)
-        axis.set_title(title)
+        for col in (0, 1):
+            frame = selected_quality if col == 0 else selected_quality[selected_quality.arm != "ND"]
+            axis = axes[row, col]
+            x = np.arange(len(frame))
+            axis.bar(x, frame[mean_col], yerr=frame[sd_col], capsize=3,
+                     color=[colors.get(arm, "#777777") for arm in frame["arm"]])
+            axis.set_xticks(x, frame["arm"])
+            axis.set_ylabel(ylabel)
+            axis.set_ylim(bottom=0)
+            axis.set_title("abcd"[row * 2 + col] + ("  All arms" if col == 0 else "  Non-ND detail (different scale)"))
     fig.tight_layout()
     for extension in ("pdf", "png"):
         target = FIGURES / f"figure_2_synthetic_quality.{extension}"
@@ -262,7 +286,9 @@ def latex_table(frame: pd.DataFrame, columns: list[tuple[str, str]], digits: int
         values = []
         for name, _ in columns:
             value = row[name]
-            if isinstance(value, (float, np.floating)):
+            if name in {"seeds", "subset_size", "detector_seed", "invalid_detections_discarded"}:
+                values.append(str(int(value)))
+            elif isinstance(value, (float, np.floating)):
                 values.append(num(value, digits))
             else:
                 values.append(tex(value))
@@ -283,16 +309,18 @@ def build_text(primary: pd.DataFrame, test: pd.DataFrame, low: pd.DataFrame,
     contrast_sentence = "; ".join(
         f"{name} {ci_phrase(row)}" for name, row in primary.iterrows()
     )
+    positive = [name for name, row in primary.iterrows() if row.simultaneous_low > 0]
+    negative = [name for name, row in primary.iterrows() if row.simultaneous_high < 0]
     abstract_interpretation = (
-        "All four simultaneous intervals included zero, so the held-out results did not isolate a robust NP advantage over the predeclared controls."
-        if all_cross else
-        "At least one multiplicity-controlled interval excluded zero; the direction and scope are reported without equivalence or external-validity claims."
+        "The intervals favoured NP over NB but NR over NP; NF and N1 comparisons remained uncertain."
+        if positive == ["NP-NB"] and negative == ["NP-NR"] else
+        "The direction of each comparison is interpreted separately, without equivalence claims."
     )
     abstract = (
         "Synthetic imagery may expand training data for laser powder bed fusion monitoring, but an image-domain residual is not evidence of calibrated process physics. "
-        "We tested a conditional coordinate-field generator with a dimensionless optical residual against data-only, donor-matched non-neural, smoothing, diffusion, conventional-augmentation, and additional-real-exposure controls. "
-        "The frozen study used 5,632 images from 176 specimens, specimen-grouped train/validation/test roles, ten paired full-pipeline replicates, and pooled COCO AP@[.50:.95] on one locked held-out campaign. "
-        f"The four primary paired AP contrasts were {contrast_sentence}. {abstract_interpretation} "
+        "We tested optical-residual coordinate-field synthesis (NP) against data-only (NF), donor-matched non-neural (NB), conventional-augmentation (N1), additional-real-exposure (NR), smoothing, and diffusion controls. "
+        "The internally frozen study used 5,632 images from 176 specimens, ten paired full-pipeline replicates, and pooled COCO AP@[.50:.95] on a specimen-grouped historical test role. "
+        f"The primary paired AP contrasts (Bonferroni-adjusted 98.75\\% intervals) were {contrast_sentence}. {abstract_interpretation} "
         "Low-data, resolution, architecture, and grouped out-of-fold analyses were secondary. All conclusions concern the inherited operational bounding-box target; particle semantics and external validity were not independently established."
     )
 
@@ -349,13 +377,20 @@ def build_text(primary: pd.DataFrame, test: pd.DataFrame, low: pd.DataFrame,
     res_summary = res_pivot.groupby("arm")["delta"].mean().to_dict()
     sensitivity = (
         "\\subsection{Sensitivity and internal robustness}\n"
-        f"Across the predeclared low-data contrasts, mean NP effects ranged as follows ({low_phrase}); these 95\\% intervals were secondary and descriptive. "
+        f"Across the predeclared low-data contrasts, mean NP effects ranged as follows ({low_phrase}); the descriptive 95\\% intervals resampled nine realization-by-pipeline differences conditional on the fixed test cohort, not test specimens. "
         f"The three-partition development-cohort grouped out-of-fold effects were {grouped_phrase}. "
         "Because those predictions reused the development cohort through grouped out-of-fold construction, they provide an internal robustness check rather than external validation. "
         "The validation-only common-64 resolution pathway changed mean AP relative to native-300 evaluation by "
         + ", ".join(f"{arm} {signed(value)}" for arm, value in sorted(res_summary.items()))
         + "; the unavailable 1024-pixel branch was not inferred (Fig.~4)."
     )
+    secondary = test[(test.source_block == "W12_core") & (test.family == "retinanet")].copy()
+    secondary_summary = secondary.groupby("arm")["test_COCO_AP"].agg(["mean", "std"])
+    secondary_phrase = "; ".join(f"{arm} {num(row['mean'], 4)} (SD {num(row['std'], 4)})"
+                                 for arm, row in secondary_summary.iterrows())
+    sensitivity += (" In the five-seed secondary RetinaNet analysis, mean AP was " + secondary_phrase
+                    + ". These descriptive results do not establish architecture-invariant superiority. "
+                    "All 20 cells and the invalid-output recovery counts are reported in Supplementary Information.")
     results = "\n\n".join([generator_results, primary_results, sensitivity])
 
     directions = [direction(row) for _, row in primary.iterrows()]
@@ -366,24 +401,25 @@ def build_text(primary: pd.DataFrame, test: pd.DataFrame, low: pd.DataFrame,
         )
     else:
         central = (
-            "At least one predeclared multiplicity-controlled contrast separated from zero. The result supports only the observed internal operational-target comparison and does not validate the optical residual as process physics."
+            "The controlled comparison shows conditional utility, not general superiority: NP exceeded the donor-matched non-neural blend NB, while the additional-real-exposure arm NR exceeded NP under multiplicity control. The intervals for NP versus NF and N1 crossed zero and do not establish equivalence or absence of an effect. NP also combines optical and boundary/moment terms, so its comparison with NF cannot isolate the optical term alone. These results concern one internal operational target and do not validate the optical residual as process physics."
         )
     discussion = (
         central + " The generator diagnostics reinforce the distinction between numerical regularization and downstream utility: the validation reconstruction path, morphology distances, and detector endpoint address different questions and need not rank methods identically. "
         "The donor-matched non-neural and additional-real-exposure arms are particularly important because gains over a weak real-only baseline can otherwise be attributed to target reuse or additional optimizer exposure.\n\n"
         "Three limitations set the boundary of interpretation. First, the inherited box is an operational region rather than an independently adjudicated particle label; no claim is made about particle count, streak identity, or thermophysical state. Second, the 176-specimen corpus provides a specimen-grouped internal hold-out but no independent machine, build, site, material, or acquisition campaign, so external validity remains unknown. Third, the coordinate field operates at 64 pixels and the higher-resolution branch was unsupported by native information; the resolution audit quantifies a pathway effect without recovering absent detail.\n\n"
-        "Within those limits, the study contributes a falsifiable controlled evaluation rather than a physics-validity claim. Future work should obtain independently adjudicated physical targets and a prospectively acquired external cohort before using the residual or detector for process inference. A calibrated time-resolved measurement would also be required before replacing the optical operator with a governing thermal or flow residual."
+        "The test role was already used historically, despite the new protocol freeze; this limits confirmatory interpretation. Secondary low-data intervals condition on a fixed test cohort and do not account for dependence from overlapping subsets. The smoothing control missed the matching tolerance, and the compact diffusion comparator was trained from scratch at a fixed budget; its adverse distances do not indict diffusion models generally. The RetinaNet recovery discarded five numerically invalid detections using a documented pre-existing adapter, which is disclosed rather than hidden by replacing runs.\n\n"
+        "Within those limits, the study contributes a controlled benchmark of synthesis utility relative to donor and exposure controls rather than a physics-validity claim. Future work should obtain independently adjudicated physical targets and a prospectively acquired external cohort before using the residual or detector for process inference. A calibrated time-resolved measurement would also be required before replacing the optical operator with a governing thermal or flow residual."
     )
 
     figure_legends = (
         "\\textbf{Figure 1. Generator mechanism diagnostics.} (a) Validation reconstruction MSE across the frozen optical-weight path (mean and standard deviation over three seeds). (b) Paired $2\\times2$ factorial effects with 95\\% Student-$t$ intervals over ten seeds. Lower MSE is better; neither panel uses held-out test outcomes.\\par\n"
-        "\\textbf{Figure 2. Synthetic-image quality diagnostics.} Mean and standard deviation over ten paired seeds for (a) the training-scaled ten-feature morphology Fr\\'echet distance (PFFD10) and (b) Fr\\'echet distance in ImageNet Inception-v3 Mixed\\_6e features. Lower values indicate closer aggregate distributions but are not measures of physical validity.\\par\n"
+        "\\textbf{Figure 2. Synthetic-image quality diagnostics.} Mean and standard deviation over ten paired seeds. (a,b) Training-scaled ten-feature morphology Fr\\'echet distance (PFFD10); (c,d) ImageNet Inception-v3 Mixed\\_6e feature distance. Left panels retain all arms; right panels expand NB, NF, NP, and NS on separate, zero-based scales to show differences obscured by ND. Lower distances do not imply physical validity.\\par\n"
         "\\textbf{Figure 3. Frozen primary detector results.} (a) Mean and standard deviation of held-out pooled COCO AP@[.50:.95] across ten full-pipeline replicates. (b) Four paired primary contrasts with Bonferroni-adjusted 98.75\\% individual bootstrap intervals. Positive values favour NP.\\par\n"
-        "\\textbf{Figure 4. Secondary sensitivity analyses.} (a) Low-data held-out effects with ordinary 95\\% intervals. (b) Grouped out-of-fold development-cohort effects with ranges across three partition seeds. (c) Validation AP change after the common-64 information pathway relative to native-300 evaluation."
+        "\\textbf{Figure 4. Secondary sensitivity analyses.} (a) Low-data effects with descriptive 95\\% percentile intervals from nine paired realization-by-pipeline cells, conditional on the fixed test cohort; test-specimen uncertainty and overlapping-subset dependence are not captured. (b) Grouped out-of-fold development-cohort effects with ranges, not confidence intervals, across three partition seeds. (c) Validation AP change after the common-64 information pathway relative to native-300 evaluation (mean and SD across ten pipelines)."
     )
     macros = (
         r"\newcommand{\ReleaseURL}{\url{https://github.com/Jinhong-Yang/scientific-reports-lpbf-spatter-public}}" + "\n" +
-        r"\newcommand{\ReleaseVersion}{v1.0.0}" + "\n"
+        "\\newcommand{\\ReleaseVersion}{" + RELEASE_VERSION + "}\n"
     )
 
     quality_table = latex_table(quality, [
@@ -415,9 +451,33 @@ def build_text(primary: pd.DataFrame, test: pd.DataFrame, low: pd.DataFrame,
         f"and the single W17 campaign evaluated {int(receipts['W17-test']['completed_evaluations'])} frozen checkpoints. "
         "Every planned, failed, interrupted, and excluded trajectory is represented in the accompanying ledgers."
     )
+    recovery = load_json(ROOT / "evidence/reporting/W17_SECONDARY_RECOVERY.json")
+    recovery_frame = pd.DataFrame(recovery["runs"])
+    secondary = secondary.merge(recovery_frame[["run_id", "invalid_detections_discarded", "candidate_detections"]],
+                                on="run_id", validate="one_to_one")
+    save_figure_data("supplement_secondary_retinanet", secondary[["run_id", "arm", "detector_seed",
+                    "test_COCO_AP", "test_COCO_AP50", "test_COCO_AP75", "candidate_detections", "invalid_detections_discarded"]])
+    detector_supp += "\n\\subsection{All secondary RetinaNet held-out cells}\n" + latex_table(
+        secondary.sort_values(["arm", "detector_seed"]), [("arm", "Arm"), ("detector_seed", "Seed"),
+        ("test_COCO_AP", "AP"), ("test_COCO_AP50", "AP50"), ("test_COCO_AP75", "AP75"),
+        ("invalid_detections_discarded", "Discarded")], 4)
+    totals = recovery["totals"]
+    detector_supp += (
+        "\n\\subsection{Technical recovery and retained failure records}\n"
+        "Amendment 004 applied the predeclared W12 Amendment 003 invalid-output adapter at the W17 serialization boundary. "
+        "One previously completed secondary cell was preserved without adapter annotation; the remaining 19 carry per-image annotations. "
+        f"Across all 20 cells, {totals['candidate_detections']:,} candidate detections reconciled to "
+        f"{totals['retained_detections']:,} retained and {totals['invalid_detections_discarded']} discarded detections "
+        f"on {totals['images_with_discards']} images. N1 seed 62002 discarded two and N1 seed 62003 discarded three; all other cells discarded none. "
+        "The adapter rejected only nonfinite scores or coordinates and nonpositive-width/height boxes, with canonical foreground-label checks. "
+        "It did not clip or replace values, change a threshold, retrain, select a checkpoint, or substitute a seed. "
+        f"The two W17 failure records remain hash-listed in the recovery receipt; the full cross-stage statistics ledger retains six failures. "
+        "Counts and all 20 outcomes are descriptive, with no new architecture-level significance test."
+    )
     statistics_supp = (
         "\\subsection{Primary held-out comparisons}\n" + primary_table +
-        "\n\\subsection{Low-data held-out comparisons}\n" + low_table +
+        "\n\\subsection{Low-data held-out comparisons}\n"
+        "These intervals resample nine paired realization-by-pipeline AP differences at each size. They condition on the same fixed test cohort and ignore dependence from overlapping subsets, so they must not be interpreted as primary specimen-bootstrap intervals.\n\n" + low_table +
         "\n\\subsection{Development grouped out-of-fold comparisons}\n" + grouped_table
     )
     reproducibility_supp = (
@@ -444,6 +504,7 @@ def build_text(primary: pd.DataFrame, test: pd.DataFrame, low: pd.DataFrame,
 
 def build() -> dict[str, Any]:
     receipts = require_receipts()
+    require_inputs()
     primary = pd.read_parquet(ROOT / "evidence/final_statistics/primary_comparisons.parquet")
     low = pd.read_parquet(ROOT / "evidence/final_statistics/low_data_comparisons.parquet")
     grouped = pd.read_parquet(ROOT / "evidence/final_statistics/grouped_oof_comparisons.parquet")
@@ -462,9 +523,11 @@ def build() -> dict[str, Any]:
         for _, row in primary.iterrows()
     )
     public_url = "https://github.com/Jinhong-Yang/scientific-reports-lpbf-spatter-public"
-    release_notes = f"""# Scientific Reports LPBF study - v1.0.0
+    release_notes = f"""# Scientific Reports LPBF study - {RELEASE_VERSION}
 
 This release is the source-data-free reproducibility and submission-preparation package for *Optical residual regularization for LPBF spatter synthesis and detection*.
+
+This follow-up preserves v1.0.0 and the frozen experiments. It repairs missing public manuscript-build inputs, reports all secondary RetinaNet results and Amendment 004 counts, corrects the fixed-ratio description, expands reproducible Methods, distinguishes uncertainty scopes, and improves the quality-figure scales. No training, held-out inference, seed selection, checkpoint selection, or primary statistical analysis was rerun.
 
 Primary held-out paired AP contrasts: {contrast_summary}.
 
@@ -487,7 +550,7 @@ Create a Python 3.11 environment, install `requirements-reporting.txt`, and run 
 ## Availability
 
 - Repository: {public_url}
-- Immutable release: `v1.0.0`
+- Immutable release: `{RELEASE_VERSION}`
 - Source dataset: AI-Hub Metal 3D-Printing Spark Image Data, dataset 71476; obtain separately under the provider's terms.
 - Raw source pixels, checkpoints, and predictions are not redistributed.
 - No project-wide open-source license is asserted in this release; third-party components retain their own terms.
@@ -496,13 +559,13 @@ See `REPRODUCIBILITY_GUIDE.md`, `DATA_AVAILABILITY.md`, `CODE_AVAILABILITY.md`, 
 """
     code_availability = f"""# Code availability
 
-The custom code, frozen configuration, aggregate evidence, manuscript sources, and public-package tests are available at {public_url} in immutable release `v1.0.0`. The release manifest and SHA-256 ledger identify the archived version used for the manuscript.
+The custom code, frozen configuration, aggregate evidence, manuscript sources, and public-package tests are available at {public_url} in immutable release `{RELEASE_VERSION}`. The release manifest and SHA-256 ledger identify the archived version used for the manuscript. Public reconstruction covers aggregate tables, text and figures, not turnkey retraining: excluded recovered-source dependencies, authorized images and prediction payloads are required for the full experiment and bootstrap.
 
 Large model weights, licensed source images, local environments, dependency vendors, secrets, caches, raw runtime checkpoints, and prediction payloads are excluded. No project-wide open-source license is asserted; availability for inspection does not grant rights beyond applicable repository and third-party terms.
 """
     data_availability = f"""# Data availability
 
-The source image pixels originate from the AI-Hub Metal 3D-Printing Spark Image Data resource (dataset 71476) and are not redistributed. Users must obtain the source under the provider's current terms. The public release at {public_url}, version `v1.0.0`, contains shareable split metadata, aggregate numerical results, bootstrap outputs, figure source data, artifact hashes, and reconstruction instructions.
+The source image pixels originate from the AI-Hub Metal 3D-Printing Spark Image Data resource (dataset 71476) and are not redistributed. Users must obtain the source under the provider's current terms. The public release at {public_url}, version `{RELEASE_VERSION}`, contains shareable split metadata, aggregate numerical results, bootstrap outputs, figure source data, artifact hashes, and aggregate reconstruction instructions.
 
 The study corpus contains 5,632 images from 176 specimens: 112 training, 32 validation, and 32 internal held-out specimens, with views kept together. Historical work had already used the held-out role, and no qualified same-task external cohort was available. The release therefore supports internal reproducibility but does not establish a pristine external validation or independently adjudicated physical particle semantics.
 """
@@ -521,16 +584,7 @@ The study corpus contains 5,632 images from 176 specimens: 112 training, 32 vali
         "primary_arm_means": test[(test["source_block"] == "W12_core") & (test["family"] == "fasterrcnn")].groupby("arm")["test_COCO_AP"].mean().to_dict(),
         "source_hashes": {
             str(path.relative_to(ROOT)).replace("\\", "/"): sha256_file(path)
-            for path in (
-                ROOT / "evidence/final_statistics/primary_comparisons.parquet",
-                ROOT / "evidence/final_statistics/low_data_comparisons.parquet",
-                ROOT / "evidence/final_statistics/grouped_oof_comparisons.parquet",
-                ROOT / "evidence/test_campaign/test_metrics.parquet",
-                ROOT / "evidence/resolution/resolution_sensitivity.parquet",
-                ROOT / "evidence/generator_factorial/factorial_effects_summary.csv",
-                ROOT / "evidence/prior_sweep/regularization_path_aggregate.csv",
-                ROOT / "evidence/stronger_generator/quality_arm_summary.csv",
-            )
+            for path in (ROOT / name for name in INPUT_FILES)
         },
         "generated_hashes": {name: sha256_file(GENERATED / name) for name in fragments},
         "support_document_hashes": {
@@ -546,6 +600,7 @@ The study corpus contains 5,632 images from 176 specimens: 112 training, 32 vali
 def preflight() -> dict[str, Any]:
     try:
         values = require_receipts()
+        require_inputs()
         return {"status": "PASS", "receipts": {name: value["status"] for name, value in values.items()}}
     except RuntimeError as error:
         return {"status": "WAITING_FOR_RESULTS", "reason": str(error)}
@@ -559,7 +614,7 @@ def main() -> int:
     args = parser.parse_args()
     result = preflight() if args.preflight else build()
     print(json.dumps(result, indent=2, sort_keys=True))
-    return 0 if result["status"] != "FAIL" else 1
+    return 0 if result["status"] == "PASS" else 1
 
 
 if __name__ == "__main__":

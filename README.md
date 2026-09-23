@@ -13,7 +13,7 @@ Create a Python 3.11 environment, install `requirements-reporting.txt`, and run 
 ## Availability
 
 - Repository: https://github.com/Jinhong-Yang/scientific-reports-lpbf-spatter-public
-- Immutable release: `v1.0.0`
+- Immutable release: `v1.0.1`
 - Source dataset: AI-Hub Metal 3D-Printing Spark Image Data, dataset 71476; obtain separately under the provider's terms.
 - Raw source pixels, checkpoints, and predictions are not redistributed.
 - No project-wide open-source license is asserted in this release; third-party components retain their own terms.

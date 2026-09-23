@@ -1,0 +1,39 @@
+{
+  "assessment_record": "docs/REVISION_RESOLUTION_v1.0.1.md",
+  "residual_limitations": [
+    "Author attestations pending",
+    "Journal may request stronger validation or source access; internal judgment is not peer-review outcome",
+    "No independent reviewer used"
+  ],
+  "resolved_issues": {
+    "claim_direction": "NP-NB positive and NP-NR negative; NF and N1 uncertain; no general superiority.",
+    "historical_test_and_label_limits": "Historical test reuse, identifier incident, unverified boxes, dHash flags and lack of external cohort disclosed.",
+    "methods_vs_execution": "Checked against frozen W09/W11/W12 source and configuration; corrected fallback ratio and compound NP-NF contrast.",
+    "public_rebuild": "Outside-checkout preflight/build/tests passed; 24 output files identical. Full-data route explicitly not turnkey.",
+    "publication_boundary": "Only scalar aggregate tables added; no pixels, raw predictions or weights. Old operational reports excluded.",
+    "secondary_coverage": "All 20 cells and five invalid detections counted; original failures preserved.",
+    "uncertainty_scope": "Primary specimen/pipeline, conditional low-data cells, and OOF ranges distinguished."
+  },
+  "review_scope": "author_side_non_independent",
+  "reviewed_at": "2026-09-23T19:45:24+09:00",
+  "reviewed_source_hashes": {
+    "manuscript/cover_letter.tex": "56ef13f3ef56d32de9b01174ecbe564f2ce264152bf4e36e58ace271a0f1ae22",
+    "manuscript/generated/abstract.tex": "b040915fcbb9a889f2fb0a7ebb987396f2f7fb4c01ade6f5caa79e39d69fe1f1",
+    "manuscript/generated/discussion.tex": "03921a6e1695d015daecea0cc9c65502eed984fc9781e296f96c31b51bc171f2",
+    "manuscript/generated/figure_legends.tex": "a015617fef33793427f45b4f91e5f9da4c34cb731d034c6859ba0856958eefff",
+    "manuscript/generated/references.tex": "46d172ddd6b4e913294a7513dd61dc38451de421ebbe0d92ab8b24756c65d6c2",
+    "manuscript/generated/results.tex": "f31a780f1fbacd49852f415cc73e70f3df4721d5a74306726a2946a147af2fec",
+    "manuscript/generated/results_macros.tex": "d460ad50be2911bcc1a1978809f8155dd706bdbdcd66f29bf576d30fcd4fb144",
+    "manuscript/generated/supplement_detector.tex": "51d0b58de8afd36a0cd599f503d91c36011cefc2ec8f2c6681caaf2b0e5aa2e7",
+    "manuscript/generated/supplement_generator.tex": "315e0c5c33c6f5c0b85ef0bf7ce888ca8a624a98a1eae20fcbca7b374436794c",
+    "manuscript/generated/supplement_quality.tex": "db39b9f9da3300d68701a38464afc72955bd2c40b7b27fd92404066a816cf414",
+    "manuscript/generated/supplement_reproducibility.tex": "6d35eb12146998450e3076be1c53b8e5587e14de513a0e0a74715ba8fc9fc12c",
+    "manuscript/generated/supplement_statistics.tex": "528c01b99e8906faebd930ba6f3e30623de7806203b730d603d60b8e5e963593",
+    "manuscript/main.tex": "fc94f59f157f5c3597421863c683988e2d4d957946c5d277b2b4bffe0110f9e6",
+    "manuscript/supplement_methods.tex": "a02b8704014fe8fb9aa95c1571619bcffe1d94c8201ddbb1341fd07136a063b9",
+    "manuscript/supplementary.tex": "4a4dae9a6aaf77fe811041495b9c2e595635f0d4e373175b85e2d794d0d13808"
+  },
+  "schema_version": 1,
+  "status": "PASS",
+  "unresolved_major_issues": []
+}

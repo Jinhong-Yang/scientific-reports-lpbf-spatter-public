@@ -15,6 +15,11 @@ def test_word_count_ignores_common_tex_commands() -> None:
     assert AUDIT.word_count(r"A \emph{small} test \citep{x}.") == 3
 
 
+def test_escaped_percentage_does_not_discard_the_rest_of_a_paragraph() -> None:
+    assert "reported afterward" in AUDIT.strip_tex(r"95\% intervals reported afterward")
+    assert "comment" not in AUDIT.strip_tex("Text % comment")
+
+
 def test_citation_and_bibliography_key_checks() -> None:
     cited = AUDIT.citation_keys(r"Text \citep{alpha,beta} and \citet{gamma}.")
     available = AUDIT.bibliography_keys("@article{alpha, title={A}}\n@misc{beta, title={B}}")
@@ -40,11 +45,18 @@ def test_hash_map_mismatches_detects_changed_and_missing_files(tmp_path: Path) -
 def test_submission_audit_distinguishes_author_confirmations() -> None:
     review, readiness = AUDIT.write_review(
         {"status": "PASS", "checks": {"inherited_target_limited": True, "external_validity_limited": True}},
-        {"status": "PASS"}, {"status": "PASS"},
+        {"status": "PASS"}, {"status": "PASS"}, {"status": "PASS"},
     )
     assert "MINOR_REVISION_OR_BETTER_INTERNAL_ASSESSMENT" in review
     assert "READY_PENDING_AUTHOR_CONFIRMATIONS" in readiness
     assert "not an independent evaluator" in review
+
+
+def test_automated_checks_alone_cannot_award_minor_revision() -> None:
+    review, readiness = AUDIT.write_review(
+        {"status": "PASS", "checks": {}}, {"status": "PASS"}, {"status": "PASS"})
+    assert "MINOR_REVISION_OR_BETTER_INTERNAL_ASSESSMENT" not in review
+    assert "READY_PENDING_AUTHOR_CONFIRMATIONS" not in readiness.split("The scientific")[0]
 
 
 def test_initial_submission_structure_matches_current_checklist() -> None:

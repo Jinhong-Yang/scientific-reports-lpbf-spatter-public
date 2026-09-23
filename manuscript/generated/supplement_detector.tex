@@ -1,1 +1,30 @@
 The W12 core matrix contained 100 completed detector trajectories; the W14 low-data matrix contained 108; and the single W17 campaign evaluated 208 frozen checkpoints. Every planned, failed, interrupted, and excluded trajectory is represented in the accompanying ledgers.
+\subsection{All secondary RetinaNet held-out cells}
+\begin{tabular}{lrrrrr}
+\toprule
+Arm & Seed & AP & AP50 & AP75 & Discarded \\
+\midrule
+N1 & 62001 & 0.6269 & 0.8732 & 0.7390 & 0 \\
+N1 & 62002 & 0.6243 & 0.8672 & 0.7159 & 2 \\
+N1 & 62003 & 0.6186 & 0.8713 & 0.7074 & 3 \\
+N1 & 62004 & 0.6207 & 0.8673 & 0.7201 & 0 \\
+N1 & 62005 & 0.6254 & 0.8645 & 0.7198 & 0 \\
+NB & 62001 & 0.6150 & 0.8687 & 0.7045 & 0 \\
+NB & 62002 & 0.6186 & 0.8697 & 0.7304 & 0 \\
+NB & 62003 & 0.6054 & 0.8692 & 0.6907 & 0 \\
+NB & 62004 & 0.6066 & 0.8624 & 0.7024 & 0 \\
+NB & 62005 & 0.6145 & 0.8653 & 0.7162 & 0 \\
+NP & 62001 & 0.6119 & 0.8648 & 0.7210 & 0 \\
+NP & 62002 & 0.6195 & 0.8694 & 0.7251 & 0 \\
+NP & 62003 & 0.6141 & 0.8642 & 0.7080 & 0 \\
+NP & 62004 & 0.6131 & 0.8661 & 0.7036 & 0 \\
+NP & 62005 & 0.6152 & 0.8668 & 0.7195 & 0 \\
+NR & 62001 & 0.6207 & 0.8617 & 0.7233 & 0 \\
+NR & 62002 & 0.6167 & 0.8564 & 0.7135 & 0 \\
+NR & 62003 & 0.6191 & 0.8634 & 0.7183 & 0 \\
+NR & 62004 & 0.6197 & 0.8684 & 0.7124 & 0 \\
+NR & 62005 & 0.6181 & 0.8609 & 0.7135 & 0 \\
+\bottomrule
+\end{tabular}
+\subsection{Technical recovery and retained failure records}
+Amendment 004 applied the predeclared W12 Amendment 003 invalid-output adapter at the W17 serialization boundary. One previously completed secondary cell was preserved without adapter annotation; the remaining 19 carry per-image annotations. Across all 20 cells, 122,707 candidate detections reconciled to 122,702 retained and 5 discarded detections on 5 images. N1 seed 62002 discarded two and N1 seed 62003 discarded three; all other cells discarded none. The adapter rejected only nonfinite scores or coordinates and nonpositive-width/height boxes, with canonical foreground-label checks. It did not clip or replace values, change a threshold, retrain, select a checkpoint, or substitute a seed. The two W17 failure records remain hash-listed in the recovery receipt; the full cross-stage statistics ledger retains six failures. Counts and all 20 outcomes are descriptive, with no new architecture-level significance test.

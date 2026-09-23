@@ -5,19 +5,19 @@
       "exists": true,
       "pages": 1,
       "path": "output/pdf/Scientific_Reports_LPBF_Cover_Letter.pdf",
-      "sha256": "215178e07f06f6f45f2deff044823963b5174f70c48891b8521de1e4b8868a19"
+      "sha256": "3b67685df4e6046a06930b820d13d1b7060fd94e79082abbbe710900bf3ec547"
     },
     "manuscript": {
       "exists": true,
-      "pages": 10,
+      "pages": 11,
       "path": "output/pdf/Scientific_Reports_LPBF_Manuscript.pdf",
-      "sha256": "a5cfc5b2d454bd3e4e670e53c9e1c15837971e8eda94d0b04290f24383b83776"
+      "sha256": "61003d92cc17a31cec335321e00024a14670e6c10c9dc982840ff07afdaa7a89"
     },
     "supplement": {
       "exists": true,
-      "pages": 2,
+      "pages": 5,
       "path": "output/pdf/Scientific_Reports_LPBF_Supplementary_Information.pdf",
-      "sha256": "70361ff646e4533aae11d87ce267a0c18cf2bd778e112f45462f8fcda050cb59"
+      "sha256": "cc9f98d2ccb4b544b9c4e9626b44b4390e04f2fb3c3ecc982bd80c6dd0bf85e5"
     }
   },
   "schema_version": 1,
@@ -26,26 +26,26 @@
   "visual_hashes_match": true,
   "visual_pages_match": true,
   "visual_qa": {
-    "defects": [],
-    "finding": "All rendered pages were inspected for clipping, overlap, broken tables or figures, and blank output. No visual production defect was found. The listed author-confirmation items are intentional pre-submission placeholders and are not visual defects.",
+    "defects": 0,
+    "finding": "All 17 rendered pages inspected. The detected SI paragraph/table overflow was repaired and re-rendered. Final equations, complete 20-cell table, figures, line numbering, references and author placeholders remain legible; no clipping or overlap detected.",
     "independent_evaluator": "EXCLUDED_BY_USER_SCOPE",
     "known_author_confirmation_items": [
-      "Funding wording and grant number",
-      "Author contribution roles and final approval",
-      "Competing-interest declaration",
-      "Exclusive-submission and reviewer-suggestion confirmations in the cover letter"
+      "Authorship/affiliations/contributions and final approval",
+      "Funding",
+      "Competing interests",
+      "Exclusivity and reviewer choices"
     ],
     "review_scope": "author_side_internal_visual_qa",
-    "reviewed_at": "2026-09-23",
+    "reviewed_at": "2026-09-23T19:45:24+09:00",
     "reviewed_pages": {
       "cover_letter": 1,
-      "manuscript": 10,
-      "supplement": 2
+      "manuscript": 11,
+      "supplement": 5
     },
     "reviewed_pdf_sha256": {
-      "cover_letter": "215178e07f06f6f45f2deff044823963b5174f70c48891b8521de1e4b8868a19",
-      "manuscript": "a5cfc5b2d454bd3e4e670e53c9e1c15837971e8eda94d0b04290f24383b83776",
-      "supplement": "70361ff646e4533aae11d87ce267a0c18cf2bd778e112f45462f8fcda050cb59"
+      "cover_letter": "3b67685df4e6046a06930b820d13d1b7060fd94e79082abbbe710900bf3ec547",
+      "manuscript": "61003d92cc17a31cec335321e00024a14670e6c10c9dc982840ff07afdaa7a89",
+      "supplement": "cc9f98d2ccb4b544b9c4e9626b44b4390e04f2fb3c3ecc982bd80c6dd0bf85e5"
     },
     "schema_version": 1,
     "status": "PASS"

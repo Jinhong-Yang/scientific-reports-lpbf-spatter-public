@@ -6,6 +6,8 @@
 
 This is an author-side technical and editorial self-review, not an independent evaluator or peer-review process. The assessment is limited to internal consistency, traceability, journal structure, claim discipline, reproducibility, and rendered-file quality.
 
+The verdict requires the separately documented, source-bound content review as well as automated checks. It is not a prediction or guarantee of a journal decision. See `docs/REVISION_RESOLUTION_v1.0.1.md` for the actual reasoning and residual limitations.
+
 ## Major-issue screen
 
 - Protocol-frozen held-out analysis complete: PASS
@@ -16,6 +18,7 @@ This is an author-side technical and editorial self-review, not an independent e
 - Reproducible method components and literature context: PASS
 - Adverse comparator result and core limitations disclosed: PASS
 - PDF build and full-page visual inspection: PASS
+- Substantive author-side content review: PASS
 
 ## Remaining minor/editorial actions
 

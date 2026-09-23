@@ -47,18 +47,18 @@
     "title_matches_supplement": true
   },
   "counts": {
-    "abstract_words": 161,
+    "abstract_words": 158,
     "author_confirmation_items": 6,
     "display_items": 4,
     "figure_legend_words": [
-      27,
-      47,
-      31,
-      12
+      42,
+      60,
+      38,
+      65
     ],
     "figures": 4,
     "keywords": 6,
-    "main_text_words": 856,
+    "main_text_words": 1255,
     "tables": 0,
     "title_words": 9
   },

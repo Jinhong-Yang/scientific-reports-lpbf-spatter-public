@@ -49,7 +49,7 @@ def safe_payload(relative: str, payload: bytes) -> None:
 
 
 def overleaf_files() -> list[str]:
-    fixed = ["manuscript/main.tex", "manuscript/supplementary.tex", "manuscript/cover_letter.tex", "manuscript/references.bib"]
+    fixed = ["manuscript/main.tex", "manuscript/supplementary.tex", "manuscript/supplement_methods.tex", "manuscript/cover_letter.tex", "manuscript/references.bib"]
     generated = [str(path.relative_to(ROOT)).replace("\\", "/") for path in sorted((ROOT / "manuscript/generated").glob("*.tex"))]
     figures = [str(path.relative_to(ROOT)).replace("\\", "/") for path in sorted((ROOT / "manuscript/figures").glob("*.pdf"))]
     return fixed + generated + figures
@@ -57,6 +57,9 @@ def overleaf_files() -> list[str]:
 
 def numerical_files() -> list[str]:
     fixed = [
+        "evidence/reporting/W17_SECONDARY_RECOVERY.json",
+        "evidence/manuscript/CONTENT_REVIEW.json",
+        "evidence/manuscript/ISOLATED_REBUILD.json",
         "configs/PROTOCOL_LOCK.yaml", "configs/PROTOCOL_LOCK.sha256",
         "configs/w17_statistics.json", "evidence/final_statistics/primary_comparisons.parquet",
         "evidence/final_statistics/low_data_comparisons.parquet",

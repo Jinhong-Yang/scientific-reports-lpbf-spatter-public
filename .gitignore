@@ -53,10 +53,8 @@ evidence/resolution/common64_per_specimen.parquet
 evidence/resolution/common64_predictions/
 evidence/resolution/exposure_compute_table.csv
 evidence/resolution/resolution_paths.json
-evidence/resolution/resolution_sensitivity.parquet
 evidence/stronger_generator/cache/
 evidence/stronger_generator/generation_metrics.parquet
 evidence/stronger_generator/generation_per_image.parquet
 evidence/stronger_generator/pffd10_scaler.json
 evidence/test_campaign/TEST_ACCESS_EVENT.json
-evidence/test_campaign/test_metrics.parquet

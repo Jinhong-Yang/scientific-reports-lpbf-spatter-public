@@ -1,6 +1,8 @@
-# Scientific Reports LPBF study - v1.0.0
+# Scientific Reports LPBF study - v1.0.1
 
 This release is the source-data-free reproducibility and submission-preparation package for *Optical residual regularization for LPBF spatter synthesis and detection*.
+
+This follow-up preserves v1.0.0 and the frozen experiments. It repairs missing public manuscript-build inputs, reports all secondary RetinaNet results and Amendment 004 counts, corrects the fixed-ratio description, expands reproducible Methods, distinguishes uncertainty scopes, and improves the quality-figure scales. No training, held-out inference, seed selection, checkpoint selection, or primary statistical analysis was rerun.
 
 Primary held-out paired AP contrasts: NP-NB +0.006 (98.75% CI +0.001 to +0.012); NP-NF -0.001 (98.75% CI -0.007 to +0.004); NP-N1 -0.008 (98.75% CI -0.017 to +0.001); NP-NR -0.010 (98.75% CI -0.019 to -0.001).
 

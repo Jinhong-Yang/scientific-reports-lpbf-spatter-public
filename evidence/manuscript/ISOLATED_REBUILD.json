@@ -1,0 +1,23 @@
+{
+  "bound_input_hashes": {
+    "evidence/final_statistics/grouped_oof_comparisons.parquet": "54f42e301ef58aa9cde4969e5e8724c757013c6da03701565aba7e922dc0a4eb",
+    "evidence/final_statistics/low_data_comparisons.parquet": "50c97576f1ce32a33f0fa952656413cbef0fb060e55e3d22e1578cc685fad971",
+    "evidence/final_statistics/primary_comparisons.parquet": "127391dc3b2b65136bb2c437fd34b285b9162a55e4ab370def935ddf57e78f2b",
+    "evidence/generator_factorial/factorial_effects_summary.csv": "999a4627459f41e76ae480780a51db4550ccf59a6503193ae9bcf6b4559bfbed",
+    "evidence/prior_sweep/regularization_path_aggregate.csv": "33c3e16e22d93aca3def48b8288022ae3fdcb2ad1b5eb93cf188228e47fb7135",
+    "evidence/prior_sweep/smoothing_match.csv": "55b0b40bd4b49aac9e19ab69e8072a007916f4690d945dfd28bbfb4b4419c1fb",
+    "evidence/reporting/W17_SECONDARY_RECOVERY.json": "92d854b9c93d55d07e963ff560622737c0836a6f2a0aa0d64dde4da3d770bafe",
+    "evidence/resolution/resolution_sensitivity.parquet": "a3614e24dc1681d0f9e7896dcf0481b038358f625c168bbb2e2bfa023aec3049",
+    "evidence/stronger_generator/quality_arm_summary.csv": "a6f1f87d7dab10ab56a613def36d2ba78300d14075f337a1d270c8fa6cbab3f4",
+    "evidence/test_campaign/test_metrics.parquet": "c29d1871f0f63b872e8dd90f6806e9eaad9016b5b1f66c88dcfe40747f5afdfe",
+    "src/reporting/build_submission_artifacts.py": "618173c028e4e0969df1796d6ebf38f1b7c5c5d07543121aced3c9b5e0ee12ba"
+  },
+  "identical_generated_outputs": 24,
+  "outside_source_checkout": true,
+  "predictions_available": false,
+  "preflight_build_tests_passed": true,
+  "retraining_attempted": false,
+  "scope": "current_allowlisted_candidate_not_yet_published_archive",
+  "source_pixels_available": false,
+  "status": "PASS"
+}

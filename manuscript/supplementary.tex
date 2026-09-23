@@ -5,6 +5,9 @@
 \usepackage{longtable}
 \usepackage{graphicx}
 \usepackage{siunitx}
+\usepackage{amsmath}
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
 \title{Supplementary Information\\\large \papertitle}
 \author{Hyojin Park, Nam-Hyun Yoo, and Jinhong Yang}
 \date{}
@@ -16,9 +19,10 @@
 Historical measurements (H0), recovered original-code reproduction (R1), and the new study (N2) were stored separately. The N2 protocol hash, data-role receipts, code and environment hashes, run rosters, failed-run records, and test-access ledger are included in the reproducibility archive. W04 independent human review and W13 corrected-label interaction were excluded by the project decision owner before N2 outcome access. This exclusion limits all bounding-box results to the operational \texttt{inherited\_bbox\_region} target and prohibits physical-label-validity claims.
 
 \section{Dataset manifest and grouping}
-The derived manifest contains 5,632 file-hash-linked rows from 176 specimens. Each specimen contributes 32 retained images. The frozen split contains 112 training, 32 validation, and 32 held-out specimens, and views belonging to a specimen remain together. The supplement reports duplicate screening, condition ranges, box geometry checks, and all known data-quality limitations without redistributing licensed pixels.
+The derived manifest contains 5,632 file-hash-linked rows from 176 specimens. Each specimen contributes 32 retained images. The frozen split contains 112 training, 32 validation, and 32 held-out specimens, and views belonging to a specimen remain together. All 22 automated integrity checks passed: required files, hashes, box bounds, readability and JSON parsing had no critical failures. Image SHA-256 values were unique and no specimen or specimen--view group crossed splits. Coarse 64-bit dHash equality flagged 2,422 rows in 320 groups, including 195 cross-split groups; distinct byte hashes and sparse off-axis patterns prevent interpreting these as proven duplicates, but near-duplicate independence remains unresolved. Thirty-six repeated label hashes covered 72 rows, all within specimen and split. Optional position fields were null for 2,816 rows; required boxes were complete. The selected corpus came from accessible validation archives, not the entire provider dataset; three training volumes were unavailable. Manufacturing-build identity was not established. These limitations persist because the independent visual review was excluded.
 
 \section{Generator specifications}
+\input{supplement_methods}
 \input{generated/supplement_generator}
 
 \section{Synthetic-pool construction and quality metrics}

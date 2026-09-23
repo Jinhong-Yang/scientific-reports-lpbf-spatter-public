@@ -22,6 +22,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Final main manuscript LaTeX pass failed" }
     & pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build supplementary.tex | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Supplementary Information LaTeX pass failed" }
+    & pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build supplementary.tex | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Final Supplementary Information LaTeX pass failed" }
     & pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build cover_letter.tex | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Cover letter LaTeX pass failed" }
 }

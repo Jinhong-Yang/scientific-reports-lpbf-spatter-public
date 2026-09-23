@@ -12,7 +12,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "evidence" / "completion"
-VERSION = "v1.0.0"
+VERSION = "v1.0.1"
 REPOSITORY_URL = "https://github.com/Jinhong-Yang/scientific-reports-lpbf-spatter-public"
 RECEIPTS = {
     "W09 generator factorial": ("evidence/generator_factorial/W09_COMPLETENESS.json", {"COMPLETE"}),

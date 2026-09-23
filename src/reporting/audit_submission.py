@@ -9,6 +9,9 @@ import re
 import subprocess
 from typing import Any
 
+import numpy as np
+import pandas as pd
+
 
 ROOT = Path(__file__).resolve().parents[2]
 MANUSCRIPT = ROOT / "manuscript"
@@ -47,7 +50,7 @@ def atomic_json(path: Path, value: Any) -> None:
 
 
 def strip_tex(value: str) -> str:
-    value = re.sub(r"%.*", " ", value)
+    value = re.sub(r"(?<!\\)%.*", " ", value)
     value = re.sub(r"\\(?:citep|citet|cite|ref|eqref)\{[^}]*\}", " ", value)
     value = re.sub(r"\\(?:input|includegraphics|bibliography|bibliographystyle)\{[^}]*\}", " ", value)
     value = re.sub(r"\\begin\{[^}]*\}|\\end\{[^}]*\}", " ", value)
@@ -156,6 +159,23 @@ def numeric_qa() -> dict[str, Any]:
     figure_mismatches = hash_map_mismatches(value.get("figure_hashes", {}), ROOT)
     mismatches = generated_mismatches + support_mismatches + source_mismatches + figure_mismatches
     primary = value.get("primary_contrasts", [])
+    # Recompute from released inputs, not just matching stored hashes/headings.
+    table = pd.read_parquet(ROOT / "evidence/test_campaign/test_metrics.parquet")
+    core = table[(table.source_block == "W12_core") & (table.family == "fasterrcnn")]
+    paired = core.pivot(index="pipeline_seed", columns="arm", values="test_COCO_AP")
+    samples = np.load(ROOT / "evidence/final_statistics/primary_bootstrap_samples.npz", allow_pickle=False)
+    recompute_errors = []
+    for row in primary:
+        a, b = row["contrast"].split("-")
+        recompute_errors.append(abs(float((paired[a] - paired[b]).mean()) - row["estimate"]))
+        column = list(samples["contrasts"]).index(row["contrast"])
+        for level, lo, hi in ((0.95, "ordinary_low", "ordinary_high"),
+                               (0.9875, "simultaneous_low", "simultaneous_high")):
+            bounds = np.quantile(samples["samples"][:, column], [(1-level)/2, 1-(1-level)/2])
+            recompute_errors.extend([abs(bounds[0]-row[lo]), abs(bounds[1]-row[hi])])
+    secondary = table[(table.source_block == "W12_core") & (table.family == "retinanet")]
+    recovery = json.loads((ROOT / "evidence/reporting/W17_SECONDARY_RECOVERY.json").read_text())
+    totals = recovery["totals"]
     checks = {
         "four_primary_contrasts": [row["contrast"] for row in primary] == ["NP-NB", "NP-NF", "NP-N1", "NP-NR"],
         "twenty_thousand_draws": all(int(row["draws"]) == 20000 for row in primary),
@@ -170,8 +190,36 @@ def numeric_qa() -> dict[str, Any]:
         "source_hashes_match": not source_mismatches,
         "figure_hashes_match": not figure_mismatches,
         "builder_did_not_read_test_payload": value.get("test_payload_read_by_builder") is False,
+        "primary_means_and_saved_sample_quantiles_recomputed": bool(recompute_errors) and max(recompute_errors) < 1e-12,
+        "secondary_all_twenty_cells": secondary.groupby("arm").size().to_dict() == dict.fromkeys(["N1", "NB", "NP", "NR"], 5),
+        "secondary_recovery_roster_matches": set(secondary.run_id) == {r["run_id"] for r in recovery["runs"]},
+        "secondary_recovery_counts_reconcile": totals["candidate_detections"] == totals["retained_detections"] + totals["invalid_detections_discarded"],
     }
-    return {"schema_version": 1, "status": "PASS" if all(checks.values()) else "FAIL", "checks": checks, "mismatches": mismatches}
+    return {"schema_version": 1, "status": "PASS" if all(checks.values()) else "FAIL", "checks": checks, "mismatches": mismatches,
+            "maximum_recompute_error": float(max(recompute_errors)),
+            "recompute_scope": "Means from per-run AP and quantiles from saved bootstrap draws; raw-prediction bootstrap not rerun"}
+
+
+def content_review_qa() -> dict[str, Any]:
+    path = EVIDENCE / "CONTENT_REVIEW.json"
+    if not path.is_file():
+        return {"status": "PENDING", "reason": "Substantive author-side review absent"}
+    review = json.loads(path.read_text(encoding="utf-8"))
+    required = {"methods_vs_execution", "claim_direction", "secondary_coverage", "uncertainty_scope",
+                "historical_test_and_label_limits", "public_rebuild", "publication_boundary"}
+    checks = review.get("resolved_issues", {})
+    bindings = review.get("reviewed_source_hashes", {})
+    expected = {p.relative_to(ROOT).as_posix() for p in MANUSCRIPT.glob("*.tex")} | {
+        p.relative_to(ROOT).as_posix() for p in GENERATED.glob("*.tex")}
+    isolated_path = EVIDENCE / "ISOLATED_REBUILD.json"
+    isolated = json.loads(isolated_path.read_text()) if isolated_path.is_file() else {}
+    isolated_ok = (isolated.get("status") == "PASS" and bool(isolated.get("bound_input_hashes"))
+                   and not hash_map_mismatches(isolated.get("bound_input_hashes", {}), ROOT))
+    passed = (review.get("status") == "PASS" and review.get("review_scope") == "author_side_non_independent"
+              and required <= checks.keys() and all(checks[k] for k in required)
+              and not review.get("unresolved_major_issues") and set(bindings) == expected
+              and not hash_map_mismatches(bindings, ROOT) and isolated_ok)
+    return {"status": "PASS" if passed else "PENDING_OR_FAIL", "receipt": review}
 
 
 def manuscript_qa() -> dict[str, Any]:
@@ -294,8 +342,10 @@ def manuscript_qa() -> dict[str, Any]:
     }
 
 
-def write_review(manuscript: dict[str, Any], numeric: dict[str, Any], build: dict[str, Any]) -> tuple[str, str]:
-    scientific_pass = manuscript["status"] == numeric["status"] == "PASS"
+def write_review(manuscript: dict[str, Any], numeric: dict[str, Any], build: dict[str, Any],
+                 content: dict[str, Any] | None = None) -> tuple[str, str]:
+    content = content or {"status": "PENDING"}
+    scientific_pass = manuscript["status"] == numeric["status"] == content["status"] == "PASS"
     build_pass = build["status"] == "PASS"
     verdict = "MINOR_REVISION_OR_BETTER_INTERNAL_ASSESSMENT" if scientific_pass and build_pass else "NOT_READY"
     readiness = "READY_PENDING_AUTHOR_CONFIRMATIONS" if verdict.startswith("MINOR") else "NOT_READY"
@@ -303,6 +353,7 @@ def write_review(manuscript: dict[str, Any], numeric: dict[str, Any], build: dic
     if manuscript["status"] != "PASS": issues.append("Journal-structure or scope audit failed.")
     if numeric["status"] != "PASS": issues.append("Numerical traceability audit failed.")
     if build["status"] != "PASS": issues.append("PDF build or visual inspection remains incomplete.")
+    if content["status"] != "PASS": issues.append("Substantive source-bound review is absent, stale, or incomplete; automated checks cannot establish minor-revision readiness.")
     review = f"""# Internal pre-submission review
 
 ## Outcome
@@ -310,6 +361,8 @@ def write_review(manuscript: dict[str, Any], numeric: dict[str, Any], build: dic
 `{verdict}`
 
 This is an author-side technical and editorial self-review, not an independent evaluator or peer-review process. The assessment is limited to internal consistency, traceability, journal structure, claim discipline, reproducibility, and rendered-file quality.
+
+The verdict requires the separately documented, source-bound content review as well as automated checks. It is not a prediction or guarantee of a journal decision. See `docs/REVISION_RESOLUTION_v1.0.1.md` for the actual reasoning and residual limitations.
 
 ## Major-issue screen
 
@@ -321,6 +374,7 @@ This is an author-side technical and editorial self-review, not an independent e
 - Reproducible method components and literature context: {'PASS' if manuscript['checks'].get('reproducible_method_components_present') and manuscript['checks'].get('literature_context_covers_process_monitoring_physics_and_generation') else 'FAIL'}
 - Adverse comparator result and core limitations disclosed: {'PASS' if manuscript['checks'].get('adverse_diffusion_diagnostics_disclosed') and manuscript['checks'].get('core_interpretive_limits_discussed') else 'FAIL'}
 - PDF build and full-page visual inspection: {'PASS' if build['status'] == 'PASS' else 'PENDING/FAIL'}
+- Substantive author-side content review: {content['status']}
 
 ## Remaining minor/editorial actions
 
@@ -342,6 +396,7 @@ The scientific package is internally complete only when this file reports `READY
 - Numerical audit: `{numeric['status']}`
 - Build and visual audit: `{build['status']}`
 - Internal review outcome: `{verdict}`
+- Substantive review: `{content['status']}`
 - Independent evaluator process: `EXCLUDED_BY_USER_SCOPE`
 """
     return review, readiness_doc
@@ -352,15 +407,16 @@ def audit() -> dict[str, Any]:
     manuscript = manuscript_qa()
     numeric = numeric_qa()
     build = build_qa()
+    content = content_review_qa()
     atomic_json(EVIDENCE / "MANUSCRIPT_QA.json", manuscript)
     atomic_json(EVIDENCE / "NUMERIC_QA.json", numeric)
     atomic_json(EVIDENCE / "BUILD_QA.json", build)
-    review, readiness = write_review(manuscript, numeric, build)
+    review, readiness = write_review(manuscript, numeric, build, content)
     atomic_text(ROOT / "docs/PRE_SUBMISSION_REVIEW.md", review)
     atomic_text(ROOT / "docs/SUBMISSION_READINESS.md", readiness)
-    status = "PASS" if manuscript["status"] == numeric["status"] == build["status"] == "PASS" else "PENDING_OR_FAIL"
+    status = "PASS" if manuscript["status"] == numeric["status"] == build["status"] == content["status"] == "PASS" else "PENDING_OR_FAIL"
     receipt = {"schema_version": 1, "status": status, "manuscript": manuscript["status"],
-               "numeric": numeric["status"], "build": build["status"],
+               "numeric": numeric["status"], "build": build["status"], "content": content["status"],
                "independent_evaluator": "EXCLUDED_BY_USER_SCOPE"}
     atomic_json(EVIDENCE / "W20_INTERNAL_REVIEW.json", receipt)
     return receipt
@@ -372,7 +428,7 @@ def main() -> int:
     args = parser.parse_args()
     result = audit()
     print(json.dumps(result, indent=2, sort_keys=True))
-    return 0 if result["status"] != "FAIL" else 1
+    return 0 if result["status"] == "PASS" else 1
 
 
 if __name__ == "__main__":

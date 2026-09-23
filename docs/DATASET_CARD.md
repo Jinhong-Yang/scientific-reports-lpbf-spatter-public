@@ -14,9 +14,9 @@ validation, or human-validated synthetic labels without additional evidence.
 ## Source and custody
 
 - Source record: AI-Hub 71476 metal 3D-printing spatter imagery.
-- Locally recovered raw archive root:
-  `D:\dataset\Metal_3D_Printing_Spart_Image` (14 archive files, approximately
-  1.056 TiB), linked through `data/raw_link/AIHub71476_archives`.
+- Locally recovered raw archive collection: 14 archive files, approximately
+  1.056 TiB, linked through `data/raw_link/AIHub71476_archives`; the private
+  mount location is intentionally omitted from this public dataset card.
 - Selected working corpus: copied beneath
   `historical/metal_spatter_pinn/data/study_v1`.
 - The recovered project states that official training volumes `TS.z05`,

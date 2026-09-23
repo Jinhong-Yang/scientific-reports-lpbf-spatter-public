@@ -21,12 +21,15 @@ it does not require or reconstruct licensed pixels.
 
 ## Authorized full-data route
 
-Obtain AI-Hub dataset 71476 separately and preserve its provider license. Mount
-or link the expected archive tree outside Git, then follow the paths described
-in `PROJECT_IDENTITY.example.json` in the release archive. Run the staged
-materialization, preflight, generator, detector, and evaluation commands only
-in the order documented by `NEXT_ACTION.md` and the immutable receipts. Do not
-open the held-out payload before the pretest freeze and unlock steps.
+Obtain AI-Hub dataset 71476 separately under its provider terms. The public
+package is an aggregate manuscript reconstruction package, not a turnkey
+full-training environment: local source mounts, the recovered historical
+`metal_spatter_pinn` package, checkpoints and prediction payloads are excluded.
+The archived runners document the original execution but require those
+additional authorized dependencies and reconstruction of the frozen manifests.
+Do not infer that a public verification PASS reruns training, inference, or
+the specimen bootstrap. Do not open a new held-out payload before an applicable
+pretest freeze and unlock. Private operational files are not public instructions.
 
 The full study is compute-intensive and was executed on a local NVIDIA GeForce
 RTX 5080. Small mechanics fixtures are supplied for end-to-end code validation;

@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,3 +31,17 @@ def test_latex_escape_protects_public_tables() -> None:
 def test_submission_preflight_waits_until_frozen_results_exist() -> None:
     status = BUILDER.preflight()["status"]
     assert status in {"PASS", "WAITING_FOR_RESULTS"}
+
+
+def test_preflight_detects_missing_public_aggregate(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(BUILDER, "ROOT", tmp_path)
+    monkeypatch.setattr(BUILDER, "require_receipts", lambda: {})
+    result = BUILDER.preflight()
+    assert result["status"] == "WAITING_FOR_RESULTS"
+    assert "test_metrics.parquet" in result["reason"]
+    assert "resolution_sensitivity.parquet" in result["reason"]
+
+
+def test_all_required_inputs_are_present_in_complete_package() -> None:
+    # Regression: receipts alone passed while v1.0.0 could not rebuild.
+    BUILDER.require_inputs()
